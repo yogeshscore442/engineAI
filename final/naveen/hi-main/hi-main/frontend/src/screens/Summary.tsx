@@ -19,12 +19,16 @@ export default function Summary() {
   const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
   const [selectedMedicine, setSelectedMedicine] = useState<any | null>(null);
   const [summaryTab, setSummaryTab] = useState<'plain' | 'short' | 'detailed'>('plain');
+  const [streamedSummary, setStreamedSummary] = useState<string | null>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       if (!id) return;
       setLoading(true);
       setError(null);
+      setStreamedSummary(null);
+      setIsStreaming(false);
       try {
         const data = await api.getRecord(id);
         setRecord(data.record);
@@ -40,6 +44,27 @@ export default function Summary() {
     load();
   }, [id, useMock]);
 
+  const handleStartStreaming = () => {
+    if (!id || isStreaming) return;
+    setIsStreaming(true);
+    setStreamedSummary('');
+    setSummaryTab('plain');
+    api.streamSummary(
+      id,
+      lang,
+      (chunk) => {
+        setStreamedSummary(chunk);
+      },
+      (full) => {
+        setIsStreaming(false);
+        setStreamedSummary(full);
+      },
+      () => {
+        setIsStreaming(false);
+      }
+    );
+  };
+
   const abnormalCount = useMemo(
     () => (record?.tests || []).filter((t) => t.flag === 'HIGH' || t.flag === 'LOW').length || 0,
     [record]
@@ -48,6 +73,9 @@ export default function Summary() {
   // Summary view mode computation - unconditionally declared before any returns
   const displayedSummary = useMemo(() => {
     if (!record) return '';
+    if (summaryTab === 'plain' && streamedSummary !== null) {
+      return streamedSummary;
+    }
     const hasTamil = Boolean(record.summary_ta);
     const activeSummary = lang === 'ta' && hasTamil ? record.summary_ta! : record.summary_en || 'No summary generated.';
     if (summaryTab === 'short' && record.short_summary) {
@@ -57,7 +85,7 @@ export default function Summary() {
       return record.detailed_summary;
     }
     return activeSummary;
-  }, [summaryTab, record, lang]);
+  }, [summaryTab, record, lang, streamedSummary]);
 
   const speak = (text: string) => {
     if (!window.speechSynthesis) return;
@@ -266,6 +294,21 @@ export default function Summary() {
               </button>
             </div>
 
+            {/* Live Streaming Button */}
+            <button
+              onClick={handleStartStreaming}
+              disabled={isStreaming}
+              title={lang === 'ta' ? 'நேரலை AI சுருக்கம்' : 'Stream AI summary in real time'}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                isStreaming
+                  ? 'bg-teal-50 text-teal-800 border-teal-300 animate-pulse'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200 shadow-2xs'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${isStreaming ? 'bg-teal-500 animate-ping' : 'bg-teal-600'}`}></span>
+              <span>{isStreaming ? (lang === 'ta' ? 'உருவாக்குகிறது…' : 'Generating…') : (lang === 'ta' ? '⚡ நேரலை AI' : '⚡ AI Stream')}</span>
+            </button>
+
             {/* Read Aloud Button */}
             <button
               onClick={() => (speaking ? stopSpeaking() : speak(displayedSummary))}
@@ -302,10 +345,13 @@ export default function Summary() {
           </div>
         )}
 
-        <div className={`text-text-primary leading-relaxed bg-surface-50 p-4 rounded-xl border border-border-light font-normal ${
+        <div className={`text-text-primary leading-relaxed bg-surface-50 p-4 rounded-xl border border-border-light font-normal relative ${
           summaryTab === 'detailed' ? 'whitespace-pre-line text-sm font-sans' : 'text-base'
         }`}>
           {displayedSummary}
+          {isStreaming && (
+            <span className="inline-block w-2 h-4 ml-1 bg-teal-600 animate-pulse align-middle rounded-xs"></span>
+          )}
         </div>
       </div>
 

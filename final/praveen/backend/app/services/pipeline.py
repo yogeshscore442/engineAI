@@ -209,13 +209,13 @@ async def run_upload_pipeline(
         normalized = normalizer.normalize_record_json(ai_result)
         normalized["record_id"] = str(uuid.uuid4())
         normalized["disclaimer"] = DISCLAIMER
-        refresh_summaries(normalized)
+        refresh_summaries(normalized, preserve_existing=True)
         doc_type = normalized.get("doc_type") or normalized.get("type") or "lab_report"
         normalized["doc_type"] = doc_type
         doc_date = normalized.get("doc_date")
         needs_review = validators.compute_needs_review(normalized)
         headline = validators.generate_headline(normalized, doc_type)
-        source = normalized.get("source", "mock")
+        source = normalized.get("source") or ("mock" if getattr(ai_client, "__class__", None).__name__ == "MockAIClient" else "ai")
         language = normalized.get("language", lang)
         normalized["schema_version"] = 1
 

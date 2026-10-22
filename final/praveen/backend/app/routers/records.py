@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.db import get_db
@@ -160,6 +160,51 @@ def get_record_file(record_id: str, db: Session = Depends(get_db)):
     ext = Path(record.file_path).suffix.lower()
     content_type = get_content_type(ext)
     return FileResponse(path=str(file_path), media_type=content_type)
+
+
+# ---------------------------------------------------------------------------
+# GET /api/records/{record_id}/summary/stream — Progressive SSE summary stream
+# ---------------------------------------------------------------------------
+@router.get(
+    "/records/{record_id}/summary/stream",
+    summary="Progressive SSE streaming summary generation",
+)
+def stream_record_summary(
+    record_id: str,
+    lang: str = "en",
+    db: Session = Depends(get_db),
+):
+    record = records_repo.get_record(db, record_id)
+    if not record:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "RECORD_NOT_FOUND", "message": f"Record '{record_id}' not found."}}
+        )
+
+    try:
+        rj = json.loads(record.record_json) if isinstance(record.record_json, str) else (record.record_json or {})
+    except Exception:
+        rj = {}
+
+    def event_generator():
+        import sys
+        from app.integration import AI_PROJECT_ROOT
+        if str(AI_PROJECT_ROOT) not in sys.path:
+            sys.path.insert(0, str(AI_PROJECT_ROOT))
+        from ai_engine.summarize import stream_summary
+        for chunk in stream_summary(rj, lang=lang):
+            yield f"data: {chunk}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 # ---------------------------------------------------------------------------

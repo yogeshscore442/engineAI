@@ -43,10 +43,11 @@ def _get_model() -> str:
         raise ValueError("Set LLM_MODEL in .env before using live summaries")
     return model
 
-_TIMEOUT = float(os.getenv("LLM_SUMMARIZE_TIMEOUT", "5.0"))
+_TIMEOUT = float(os.getenv("LLM_SUMMARIZE_TIMEOUT", "4.0"))
 _CIRCUIT_BROKEN = False
 _CIRCUIT_BROKEN_UNTIL = 0.0
 _SUMMARY_CACHE: dict[str, dict[str, str]] = {}
+_MODEL_CACHE: dict[tuple[str, int], Any] = {}
 
 def _compute_record_hash(record: dict) -> str:
     import hashlib
@@ -199,12 +200,18 @@ def _call_summarize_llm(prompt: str, system: str) -> str:
 
             for m in models_to_try:
                 try:
-                    model = genai.GenerativeModel(
-                        model_name=m, system_instruction=system
-                    )
+                    cache_key = (m, hash(system))
+                    if cache_key in _MODEL_CACHE:
+                        model = _MODEL_CACHE[cache_key]
+                    else:
+                        model = genai.GenerativeModel(
+                            model_name=m, system_instruction=system
+                        )
+                        _MODEL_CACHE[cache_key] = model
+
                     resp = model.generate_content(
                         prompt,
-                        generation_config={"temperature": 0.3, "max_output_tokens": 1024},
+                        generation_config={"temperature": 0.3, "max_output_tokens": 250},
                         request_options={"timeout": _TIMEOUT},
                     )
                     if resp and resp.text:
@@ -845,19 +852,29 @@ def build_summaries(record: dict, *, use_llm: bool = True) -> dict:
             return hi_text.strip()
         return _deterministic_summary_hi(record)
 
-    # Execute all 3 languages concurrently in parallel
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        f_en = executor.submit(_get_en)
-        f_ta = executor.submit(_get_ta)
-        f_hi = executor.submit(_get_hi)
-        record["summary_en"] = f_en.result()
-        record["summary_ta"] = f_ta.result()
-        record["summary_hi"] = f_hi.result()
+    # Generate the requested active user language with AI, filling others with instant safe fallbacks
+    target_lang = (record.get("language") or "en").lower()
+    if fast_mode:
+        record["summary_en"] = record.get("summary_en") or _deterministic_summary_en(record)
+        record["summary_ta"] = record.get("summary_ta") or _deterministic_summary_ta(record)
+        record["summary_hi"] = record.get("summary_hi") or _deterministic_summary_hi(record)
+    elif target_lang == "ta":
+        record["summary_ta"] = _get_ta()
+        record["summary_en"] = record.get("summary_en") or _deterministic_summary_en(record)
+        record["summary_hi"] = record.get("summary_hi") or _deterministic_summary_hi(record)
+    elif target_lang == "hi":
+        record["summary_hi"] = _get_hi()
+        record["summary_en"] = record.get("summary_en") or _deterministic_summary_en(record)
+        record["summary_ta"] = record.get("summary_ta") or _deterministic_summary_ta(record)
+    else:
+        record["summary_en"] = _get_en()
+        record["summary_ta"] = record.get("summary_ta") or _deterministic_summary_ta(record)
+        record["summary_hi"] = record.get("summary_hi") or _deterministic_summary_hi(record)
 
     if record["summary_en"] and DISCLAIMER not in record["summary_en"]:
         record["summary_en"] = record["summary_en"].rstrip() + " " + DISCLAIMER
 
-    # Short & Detailed summaries
+    # Short & Detailed summaries (instant, deterministic)
     record["short_summary"] = build_short_summary(record)
     record["detailed_summary"] = build_detailed_summary(record)
 
@@ -871,3 +888,69 @@ def build_summaries(record: dict, *, use_llm: bool = True) -> dict:
     }
 
     return record
+
+
+def stream_summary(record: dict, lang: str = "en"):
+    """
+    Yields chunks of the plain-language summary progressively as they are generated.
+    When live streaming LLM is supported, yields real-time chunks from the model.
+    Falls back to progressive words/phrases from the verified deterministic summary.
+    """
+    lang = (lang or "en").lower()
+    prompt = _build_prompt(record)
+    provider = _get_provider()
+    api_key = _get_api_key()
+
+    if lang == "ta":
+        fallback_text = _deterministic_summary_ta(record)
+        system = _TA_SYSTEM
+    elif lang == "hi":
+        fallback_text = _deterministic_summary_hi(record)
+        system = _HI_SYSTEM
+    else:
+        fallback_text = _deterministic_summary_en(record)
+        system = _EN_SYSTEM
+
+    local_providers = {"ollama", "llamacpp", "llama.cpp", "transformers", "huggingface", "medgemma"}
+    can_stream_llm = bool(api_key or provider in local_providers) and not _CIRCUIT_BROKEN and os.getenv("FAST_SUMMARIES", "").lower() not in ("1", "true", "yes")
+
+    if can_stream_llm and provider == "google":
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=api_key)
+            model_name = _get_model()
+            cache_key = (model_name, hash(system))
+            if cache_key in _MODEL_CACHE:
+                model = _MODEL_CACHE[cache_key]
+            else:
+                model = genai.GenerativeModel(model_name=model_name, system_instruction=system)
+                _MODEL_CACHE[cache_key] = model
+
+            response = model.generate_content(
+                prompt,
+                stream=True,
+                generation_config={"temperature": 0.3, "max_output_tokens": 250},
+                request_options={"timeout": _TIMEOUT},
+            )
+            full_text = []
+            for chunk in response:
+                if chunk and chunk.text:
+                    full_text.append(chunk.text)
+                    yield chunk.text
+
+            joined = "".join(full_text).strip()
+            if lang == "en" and DISCLAIMER not in joined:
+                yield " " + DISCLAIMER
+            return
+        except Exception as ex:
+            logger.warning("Live LLM summary streaming failed (%s); streaming deterministic summary", ex)
+
+    # Progressive streaming fallback (delivers first content in <100ms)
+    words = fallback_text.split(" ")
+    chunk_size = 3
+    for i in range(0, len(words), chunk_size):
+        chunk = " ".join(words[i:i + chunk_size])
+        if i + chunk_size < len(words):
+            chunk += " "
+        yield chunk
+        time.sleep(0.03)

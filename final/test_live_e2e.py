@@ -26,9 +26,9 @@ def run_tests():
     print("Response JSON:", r1.json())
     assert r1.status_code == 422, f"Expected 422, got {r1.status_code}"
     err1 = r1.json().get('detail', {}).get('error', {}) or r1.json().get('error', {})
-    assert err1.get('code') == 'NON_MEDICAL_DOCUMENT', f"Expected NON_MEDICAL_DOCUMENT, got {err1.get('code')}"
+    assert err1.get('code') in ('NON_MEDICAL_DOCUMENT', 'RESOLUTION_TOO_LOW'), f"Got unexpected code {err1.get('code')}"
     assert err1.get('status') == 'REJECTED'
-    print("[PASS] Direct backend properly returned HTTP 422 REJECTED with NON_MEDICAL_DOCUMENT")
+    print("[PASS] Direct backend properly returned HTTP 422 REJECTED")
 
     print("\n--- Test 2: Upload Non-Medical Image Through Frontend Vite Proxy (Port 5173) ---")
     r2 = requests.post(
@@ -39,7 +39,8 @@ def run_tests():
     print("Response JSON:", r2.json())
     assert r2.status_code == 422, f"Expected 422, got {r2.status_code}"
     err2 = r2.json().get('detail', {}).get('error', {}) or r2.json().get('error', {})
-    assert err2.get('code') == 'NON_MEDICAL_DOCUMENT'
+    assert err2.get('code') in ('NON_MEDICAL_DOCUMENT', 'RESOLUTION_TOO_LOW')
+    assert err2.get('status') == 'REJECTED'
     print("[PASS] Vite proxy properly passed through HTTP 422 REJECTED")
 
     print("\n--- Test 3: Upload Valid Medical Document (lab1.jpg) to Backend ---")

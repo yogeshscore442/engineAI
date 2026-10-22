@@ -745,7 +745,7 @@ def separate_printed_and_handwritten(tokens: list[dict], lines: list[dict], full
     if any(k in full_text_lower for k in ["homoeo", "homeo", "homeopath", "homoeopath"]):
         result["is_homeopathic"] = True
 
-    if any(k in full_text_lower for k in ["treatment in stat", "pedal edema", "pedal edima", "kmc date", "inveshgationg", "investigation"]):
+    if any(k in full_text_lower for k in ["treatment in stat", "pedal edema", "pedal edima", "kmc date", "inveshgationg"]):
         result["is_hospital_form"] = True
 
     # Header patterns (typically printed)

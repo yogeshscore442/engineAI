@@ -109,6 +109,8 @@ export const api = {
   },
 
   async uploadRecord(file: File, onProgress?: (progress: UploadProgress) => void, profileId: string = 'default'): Promise<UploadResponse> {
+    useMock = false;
+    persistMockMode();
     onProgress?.({ step: 'reading', message: 'Reading document file…' });
     await delay(100);
 
@@ -203,7 +205,7 @@ export const api = {
       if (mockRecordMap[id]) {
         return { record_id: id, status: mockStatuses[id] || 'draft', record: mockRecordMap[id] };
       }
-      throw { error: { code: 'RECORD_NOT_FOUND', message: 'Sample record not found.' } } as ApiError;
+      // If requested record is not in sample map, seamlessly query live backend
     }
 
     const data = await request<any>(`/records/${id}`);
@@ -232,7 +234,7 @@ export const api = {
   },
 
   async getRecordFile(id: string): Promise<Blob> {
-    if (useMock) {
+    if (useMock && (id.startsWith('mock-') || mockRecordMap[id])) {
       return new Blob(['Sample document preview unavailable'], { type: 'text/plain' });
     }
     const res = await fetch(`${getApiBase()}/records/${id}/file`, { credentials: 'include' });
@@ -241,7 +243,7 @@ export const api = {
   },
 
   async confirmRecord(id: string, record: RecordType): Promise<{ record_id: string; status: 'confirmed'; record: RecordType }> {
-    if (useMock) {
+    if (useMock && (id.startsWith('mock-') || mockRecordMap[id])) {
       mockRecordMap[id] = record;
       mockStatuses[id] = 'confirmed';
       return { record_id: id, status: 'confirmed', record };
@@ -250,6 +252,57 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify({ record }),
     });
+  },
+
+  async streamSummary(
+    recordId: string,
+    lang: string = 'en',
+    onChunk: (chunk: string) => void,
+    onDone?: (fullText: string) => void,
+    onError?: (err: any) => void
+  ): Promise<() => void> {
+    const controller = new AbortController();
+    let accumulated = '';
+    (async () => {
+      try {
+        const url = `${getApiBase()}/records/${encodeURIComponent(recordId)}/summary/stream?lang=${encodeURIComponent(lang)}`;
+        const res = await fetch(url, {
+          signal: controller.signal,
+          credentials: 'include',
+        });
+        if (!res.ok) {
+          throw new Error(`Stream failed (HTTP ${res.status})`);
+        }
+        const reader = res.body?.getReader();
+        if (!reader) {
+          throw new Error('Streaming response body unavailable');
+        }
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunkStr = decoder.decode(value, { stream: true });
+          const lines = chunkStr.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataPayload = line.slice(6);
+              if (dataPayload === '[DONE]') {
+                onDone?.(accumulated);
+                return;
+              }
+              accumulated += dataPayload;
+              onChunk(accumulated);
+            }
+          }
+        }
+        onDone?.(accumulated);
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          onError?.(err);
+        }
+      }
+    })();
+    return () => controller.abort();
   },
 
   async getTimeline(profileId: string = 'default'): Promise<TimelineResponse> {

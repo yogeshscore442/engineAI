@@ -672,9 +672,10 @@ def _fallback_extract_from_text(
 
     # Check for Hospital Clinical Form (Negative-prescription / clinical note classification)
     is_hospital_form = (
-        bool((doc_info or {}).get("is_hospital_form"))
-        or (doc_type_hint.lower() in ("hospital_form", "clinical_note"))
-        or any(k in text.lower() for k in ["treatment in stat", "pedal edima", "pedal edema", "kmc date", "inveshgationg", "anxiely", "ankely", "sinus tachycardia"])
+        (bool((doc_info or {}).get("is_hospital_form"))
+         or (doc_type_hint.lower() in ("hospital_form", "clinical_note"))
+         or any(k in text.lower() for k in ["treatment in stat", "pedal edima", "pedal edema", "kmc date", "inveshgationg", "anxiely", "ankely", "sinus tachycardia"]))
+        and doc_type_hint.lower() not in ("lab_report", "prescription")
     )
     if is_hospital_form:
         clinical_notes_list = []

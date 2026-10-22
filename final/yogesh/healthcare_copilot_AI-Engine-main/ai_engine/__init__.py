@@ -23,7 +23,7 @@ load_dotenv()  # load .env at import time
 from .cache import get_cached, set_cached
 from .extract import extract_from_file
 from .models import make_error_record, make_rejected_record, make_needs_review_record, DISCLAIMER
-from .summarize import build_summaries
+from .summarize import build_summaries, stream_summary
 from .interactions import check_drug_interactions, get_drug_advisories
 from .affordability import calculate_prescription_savings
 from .fhir import record_to_fhir_bundle, export_fhir_json
@@ -41,6 +41,8 @@ __all__ = [
     "get_drug_advisories",
     "generate_audio",
     "get_browser_speech_html",
+    "build_summaries",
+    "stream_summary",
 ]
 __version__ = "2.1.0"
 

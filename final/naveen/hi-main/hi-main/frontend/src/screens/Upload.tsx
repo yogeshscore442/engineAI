@@ -49,6 +49,10 @@ export default function Upload() {
       return;
     }
 
+    // Ensure mock mode is deactivated for real file uploads so new records are processed live
+    api.setUseMock(false);
+    setUseMock(false);
+
     // Reset old states completely
     setError(null);
     setIsRejectedModalOpen(false);

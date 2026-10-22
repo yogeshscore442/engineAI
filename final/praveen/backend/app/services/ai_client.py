@@ -124,18 +124,11 @@ class MockAIClient:
                 path = Path(temp) / f"{safe_stem}{suffix}"
                 path.write_bytes(file_bytes)
 
-                prev_mode = os.environ.get("USE_MOCK_AI")
-                try:
-                    os.environ["USE_MOCK_AI"] = "true"
-                    res = extract_record(str(path), mime, lang_hint=lang)
-                    if isinstance(res, dict):
-                        res["source"] = "mock"
-                        return res
-                finally:
-                    if prev_mode is not None:
-                        os.environ["USE_MOCK_AI"] = prev_mode
-                    else:
-                        os.environ.pop("USE_MOCK_AI", None)
+                # Process the actual document content through ai_engine without forcing static mock fixtures
+                res = extract_record(str(path), mime, lang_hint=lang)
+                if isinstance(res, dict):
+                    res.setdefault("source", "ai")
+                    return res
         except Exception as exc:
             logger.debug("MockAIClient direct engine extraction skipped: %s", exc)
 
