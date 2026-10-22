@@ -1,0 +1,97 @@
+{
+  "dataset_total": 48,
+  "train_samples": 36,
+  "test_samples": 12,
+  "test_accuracy": 0.9167,
+  "false_acceptance_rate_far": 0.0,
+  "false_rejection_rate_frr": 11.11,
+  "classes": [
+    "DIAGNOSTIC_REPORT",
+    "DISCHARGE_SUMMARY",
+    "LAB_REPORT",
+    "NON_MEDICAL",
+    "PRESCRIPTION"
+  ],
+  "confusion_matrix": [
+    [
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      2,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      3,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      3
+    ]
+  ],
+  "classification_report": {
+    "DIAGNOSTIC_REPORT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 2.0
+    },
+    "DISCHARGE_SUMMARY": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 2.0
+    },
+    "LAB_REPORT": {
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1-score": 0.6666666666666666,
+      "support": 2.0
+    },
+    "NON_MEDICAL": {
+      "precision": 0.75,
+      "recall": 1.0,
+      "f1-score": 0.8571428571428571,
+      "support": 3.0
+    },
+    "PRESCRIPTION": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 3.0
+    },
+    "accuracy": 0.9166666666666666,
+    "macro avg": {
+      "precision": 0.95,
+      "recall": 0.9,
+      "f1-score": 0.9047619047619048,
+      "support": 12.0
+    },
+    "weighted avg": {
+      "precision": 0.9375,
+      "recall": 0.9166666666666666,
+      "f1-score": 0.9087301587301587,
+      "support": 12.0
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "total_documents": 2003,
+  "target_reached": true,
+  "classes": {
+    "PRESCRIPTION": 1000,
+    "LAB_REPORT": 1000
+  },
+  "provenance": {
+    "real_authorized_documents": 12,
+    "synthetic_calibrated_documents": 1991,
+    "real_percentage": 0.6,
+    "synthetic_percentage": 99.4
+  },
+  "output_file": "C:\\Users\\YOGESH\\Downloads\\ai-health-copilot-main\\ai-health-copilot-main\\final\\dataset_pipeline\\data\\raw\\documents.jsonl",
+  "schema_file": "C:\\Users\\YOGESH\\Downloads\\ai-health-copilot-main\\ai-health-copilot-main\\final\\dataset_pipeline\\schema.json",
+  "license": "CC-BY-4.0 / MIT"
+}

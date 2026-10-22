@@ -1,0 +1,2 @@
+-r praveen/backend/requirements.txt
+-r yogesh/healthcare_copilot_AI-Engine-main/requirements.txt

@@ -1,0 +1,42 @@
+services:
+  # Backend API Web Service (FastAPI + AI Engine)
+  - type: web
+    name: health-copilot-backend
+    runtime: python
+    plan: free
+    rootDir: final
+    buildCommand: |
+      pip install -r requirements.txt
+    startCommand: >
+      cd praveen/backend &&
+      python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.8"
+      - key: USE_MOCK_AI
+        value: "true"
+      - key: AI_ENGINE_ROOT
+        value: /opt/render/project/src/final/yogesh/healthcare_copilot_AI-Engine-main
+      - key: PYTHONPATH
+        value: /opt/render/project/src/final/praveen/backend:/opt/render/project/src/final/yogesh/healthcare_copilot_AI-Engine-main
+      - key: ALLOWED_ORIGINS
+        value: "https://health-copilot-frontend.onrender.com"
+
+  # Frontend Static Site (React + Vite)
+  - type: web
+    name: health-copilot-frontend
+    runtime: static
+    rootDir: final/naveen/hi-main/hi-main/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: "https://health-copilot-backend.onrender.com/api"
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

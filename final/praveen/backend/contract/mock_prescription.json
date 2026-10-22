@@ -1,0 +1,41 @@
+{
+  "doc_type": "prescription",
+  "doc_date": "2024-06-14",
+  "source": "mock",
+  "language": "en",
+  "summary": "Prescription for diabetes management and mild anaemia.",
+  "tests": [],
+  "medicines": [
+    {
+      "name_raw": "Metformin",
+      "generic": "metformin",
+      "strength": "500mg",
+      "schedule_raw": "Twice daily after meals",
+      "schedule_parsed": {"frequency": 2, "timing": "after_meals"},
+      "duration_days": 90,
+      "confidence": 0.96
+    },
+    {
+      "name_raw": "Obimet SR",
+      "generic": "metformin",
+      "strength": "1000mg",
+      "schedule_raw": "Once at night",
+      "schedule_parsed": {"frequency": 1, "timing": "bedtime"},
+      "duration_days": 90,
+      "confidence": 0.88
+    },
+    {
+      "name_raw": "Dolo 650",
+      "generic": "paracetamol",
+      "strength": "650mg",
+      "schedule_raw": "SOS (as needed for pain/fever)",
+      "schedule_parsed": {"frequency": "sos"},
+      "duration_days": 7,
+      "confidence": 0.92
+    }
+  ],
+  "diagnoses": [
+    {"name": "Type 2 Diabetes Mellitus", "icd10": "E11"},
+    {"name": "Iron Deficiency Anaemia", "icd10": "D50.9"}
+  ]
+}

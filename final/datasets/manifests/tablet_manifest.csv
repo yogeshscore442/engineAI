@@ -1,0 +1,2 @@
+document_id,source,dataset_name,original_filename,document_category,license,acquisition_date,annotation_availability,language,image_dimensions,file_format,sha256,duplicate_status,quality_status,split_assignment,provenance
+TABLET-EVAL-00001,clinical_fixtures,Medicine Tablet Visual Verification Bench,tablet_paracetamol_650_strip.jpg,TABLET_OR_MEDICINE_IMAGE,CC-BY-4.0,2026-10-21,Brand & Imprint Code,en,1024x768,JPEG,c3769670386c30bcdb0bde52aa99f44a36332f3d1bfff08f07f1be129b9b81d7,Unique,High,evaluation,synthetic_calibrated

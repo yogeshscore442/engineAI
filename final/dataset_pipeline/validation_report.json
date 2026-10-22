@@ -1,0 +1,15 @@
+{
+  "dataset_name": "Healthcare Co-Pilot Unified Medical Benchmark",
+  "total_input_records": 2003,
+  "valid_deduplicated_records": 2003,
+  "duplicate_records_removed": 0,
+  "schema_invalid_records": 0,
+  "pass_rate_percentage": 100.0,
+  "class_breakdown": {
+    "PRESCRIPTION": 1000,
+    "LAB_REPORT": 1000,
+    "OTHER": 3
+  },
+  "output_file": "C:\\Users\\YOGESH\\Downloads\\ai-health-copilot-main\\ai-health-copilot-main\\final\\dataset_pipeline\\data\\processed\\clean_documents.jsonl",
+  "validation_errors": {}
+}

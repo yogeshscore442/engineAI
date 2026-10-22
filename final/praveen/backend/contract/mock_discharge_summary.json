@@ -1,0 +1,57 @@
+{
+  "doc_type": "discharge_summary",
+  "doc_date": "2024-05-20",
+  "source": "mock",
+  "language": "en",
+  "summary": "Admitted for uncontrolled diabetes. Discharged with improved glycaemic control.",
+  "tests": [
+    {
+      "name": "HbA1c",
+      "name_canonical": "HbA1c",
+      "loinc": "4548-4",
+      "value": 9.2,
+      "unit": "%",
+      "ref_low": 4.0,
+      "ref_high": 5.7,
+      "flag": "H",
+      "date": "2024-05-18",
+      "confidence": 0.94
+    },
+    {
+      "name": "Serum Creatinine",
+      "name_canonical": "Serum Creatinine",
+      "loinc": "2160-0",
+      "value": 1.1,
+      "unit": "mg/dL",
+      "ref_low": 0.6,
+      "ref_high": 1.2,
+      "flag": "N",
+      "date": "2024-05-18",
+      "confidence": 0.91
+    }
+  ],
+  "medicines": [
+    {
+      "name_raw": "Insulin Glargine",
+      "generic": "insulin glargine",
+      "strength": "10 units",
+      "schedule_raw": "Once at bedtime subcutaneous",
+      "schedule_parsed": {"frequency": 1, "timing": "bedtime", "route": "subcutaneous"},
+      "duration_days": 30,
+      "confidence": 0.95
+    },
+    {
+      "name_raw": "Crocin 500",
+      "generic": "paracetamol",
+      "strength": "500mg",
+      "schedule_raw": "SOS",
+      "schedule_parsed": {"frequency": "sos"},
+      "duration_days": 5,
+      "confidence": 0.89
+    }
+  ],
+  "diagnoses": [
+    {"name": "Uncontrolled Type 2 Diabetes Mellitus", "icd10": "E11.9"},
+    {"name": "Hypertension", "icd10": "I10"}
+  ]
+}

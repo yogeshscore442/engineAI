@@ -1,0 +1,100 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#eef7fb',
+          100: '#d9eef7',
+          200: '#b3dcf0',
+          300: '#7cc3e6',
+          400: '#3aa8db',
+          500: '#0d9488',
+          600: '#0f766e',
+          700: '#115e59',
+          800: '#134e4a',
+          900: '#134e4a',
+        },
+        surface: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
+        },
+        text: {
+          primary: '#111827',
+          secondary: '#4b5563',
+          muted: '#9ca3af',
+        },
+        border: {
+          light: '#e5e7eb',
+          medium: '#d1d5db',
+        },
+        status: {
+          low: '#2563eb',
+          normal: '#16a34a',
+          high: '#dc2626',
+          unknown: '#6b7280',
+        },
+        warning: {
+          bg: '#fffbeb',
+          text: '#92400e',
+          border: '#fde68a',
+        },
+        error: {
+          bg: '#fef2f2',
+          text: '#991b1b',
+          border: '#fecaca',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Source Sans 3', 'Inter', 'system-ui', 'sans-serif'],
+        ta: ['Noto Sans Tamil', 'Inter', 'system-ui', 'sans-serif'],
+      },
+      spacing: {
+        '0': '0',
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+        '8': '32px',
+        '10': '40px',
+        '12': '48px',
+        '16': '64px',
+      },
+      borderRadius: {
+        sm: '6px',
+        md: '10px',
+        lg: '14px',
+        xl: '18px',
+        full: '9999px',
+      },
+      boxShadow: {
+        '2xs': '0 1px 1px 0 rgba(0, 0, 0, 0.03)',
+        'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        card: '0 1px 3px rgba(0, 0, 0, 0.08)',
+        elevated: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        soft: '0 2px 8px rgba(0, 0, 0, 0.06)',
+      },
+      transitionDuration: {
+        fast: '150ms',
+        normal: '200ms',
+        slow: '300ms',
+      },
+    },
+  },
+  plugins: [],
+}
