@@ -53,6 +53,7 @@ build/
 
 # Uploads & Temporary Run Data
 uploads/
+artifacts/
 *.db
 *.db-shm
 *.db-wal

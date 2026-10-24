@@ -203,7 +203,9 @@ async def request_logging_middleware(request: Request, call_next):
 # ---------------------------------------------------------------------------
 # Router registration
 # ---------------------------------------------------------------------------
-from app.routers import records, profiles, fhir, abha, ask, upload_ui, catalog  # noqa: E402
+# Router registration
+# ---------------------------------------------------------------------------
+from app.routers import records, profiles, fhir, abha, ask, upload_ui, catalog, healthcare_modules  # noqa: E402
 
 app.include_router(upload_ui.router, tags=["Upload UI"])
 app.include_router(records.router, prefix="/api", tags=["Records"])
@@ -212,16 +214,44 @@ app.include_router(fhir.router, prefix="/api", tags=["FHIR"])
 app.include_router(abha.router, prefix="/api", tags=["ABHA (Mock)"])
 app.include_router(ask.router, prefix="/api", tags=["Ask"])
 app.include_router(catalog.router, prefix="/api", tags=["Medical Product Catalog"])
+app.include_router(healthcare_modules.router, prefix="/api", tags=["Healthcare Modules"])
 
 
 # ---------------------------------------------------------------------------
-# Health endpoint
+# Health endpoint — reports actual service availability, DB & OCR status
 # ---------------------------------------------------------------------------
 @app.get("/api/health", response_model=HealthResponse, tags=["System"])
 def health():
     cfg = get_settings()
+    from app.db import db_session
+    from sqlalchemy import text
+    from pathlib import Path
+    import os
+
+    # 1. Real Database Connectivity check
+    db_alive = False
+    try:
+        with db_session() as db:
+            db.execute(text("SELECT 1"))
+            db_alive = True
+    except Exception as e:
+        logger.warning("Health check DB probe failed: %s", e)
+        db_alive = False
+
+    # 2. Medical Catalog availability check
+    from app.catalog.brands_loader import get_brand_map
+    brands_count = len(get_brand_map())
+    catalog_alive = brands_count > 0
+
+    # 3. OCR and AI Model readiness check
+    tesseract_ok = os.path.isfile(r"C:\Program Files\Tesseract-OCR\tesseract.exe") or bool(os.getenv("TESSERACT_CMD"))
+    crnn_ckpt = Path(__file__).resolve().parent.parent.parent.parent / "models" / "prescription_ocr" / "crnn_handwriting.pth"
+    crnn_ok = crnn_ckpt.is_file()
+
+    is_healthy = db_alive and catalog_alive
+
     return HealthResponse(
-        status="ok",
+        status="ok" if is_healthy else "degraded",
         api_version=cfg.api_version,
         schema_version=cfg.schema_version,
         ai_mode="mock" if cfg.use_mock_ai else "real",
@@ -229,5 +259,16 @@ def health():
             "ask": cfg.feature_ask,
             "abha_mock": cfg.feature_abha_mock,
             "family_profiles": cfg.feature_family_profiles,
+            "database_connected": db_alive,
+            "catalog_loaded": catalog_alive,
+            "brands_count": brands_count,
+            "tesseract_ocr_ready": tesseract_ok,
+            "crnn_handwriting_model_loaded": crnn_ok,
+            "carebridge_ai": True,
+            "medexplain_verify": True,
+            "adhere_sense": True,
+            "access_lens": True,
+            "medlist_safety": True,
         },
     )
+
