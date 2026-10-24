@@ -635,6 +635,12 @@ class DocTROCRProvider(BaseOCRProvider):
 
         try:
             import numpy as np
+            from .handwriting_model import HandwritingOCRModel
+            hw_model = HandwritingOCRModel.get_instance()
+        except Exception:
+            hw_model = None
+
+        try:
             arrays = [np.array(img.convert("RGB")) for img in images]
             doc_res = doctr_pred(arrays)
 
@@ -644,6 +650,10 @@ class DocTROCRProvider(BaseOCRProvider):
             conf_scores = []
 
             for page_idx, page in enumerate(doc_res.pages):
+                cur_img = images[page_idx] if page_idx < len(images) else None
+                cur_w_px = cur_img.width if cur_img else 1000
+                cur_h_px = cur_img.height if cur_img else 1000
+
                 for b_idx, block in enumerate(page.blocks):
                     for l_idx, line in enumerate(block.lines):
                         line_words = []
@@ -654,13 +664,31 @@ class DocTROCRProvider(BaseOCRProvider):
                             word_val = str(w.value).strip()
                             if not word_val:
                                 continue
-                            line_words.append(word_val)
                             conf = float(w.confidence)
-                            line_confs.append(conf)
-                            conf_scores.append(conf)
 
                             # docTR geometry: ((x_min, y_min), (x_max, y_max)) in 0..1 relative coordinates
                             (x0, y0), (x1, y1) = w.geometry
+
+                            # Handwriting refinement via trained RxHand CRNN
+                            if hw_model is not None and conf < 0.85 and cur_img is not None:
+                                try:
+                                    cx0 = max(0, int(x0 * cur_w_px) - 2)
+                                    cy0 = max(0, int(y0 * cur_h_px) - 2)
+                                    cx1 = min(cur_w_px, int(x1 * cur_w_px) + 2)
+                                    cy1 = min(cur_h_px, int(y1 * cur_h_px) + 2)
+                                    if (cx1 - cx0) >= 12 and (cy1 - cy0) >= 12:
+                                        crop_im = cur_img.crop((cx0, cy0, cx1, cy1))
+                                        hw_text, hw_conf = hw_model.predict_word(crop_im)
+                                        if hw_text and len(hw_text) >= 2 and hw_conf >= 0.50:
+                                            word_val = hw_text
+                                            conf = max(conf, hw_conf)
+                                except Exception:
+                                    pass
+
+                            line_words.append(word_val)
+                            line_confs.append(conf)
+                            conf_scores.append(conf)
+
                             w_box = [
                                 round(float(x0), 4),
                                 round(float(y0), 4),
@@ -888,8 +916,62 @@ class OCRProviderRegistry:
         return "", "none", [], [], False
 
 
+class RxHandCRNNProvider(BaseOCRProvider):
+    """
+    Specialized Handwriting OCR Engine trained on RxHand Prescription Word Dataset.
+    Excels at recognizing handwritten doctor prescription words, medicine brands, and dosages.
+    """
+    @property
+    def name(self) -> str:
+        return "rxhand_crnn"
+
+    def is_available(self) -> bool:
+        try:
+            from .handwriting_model import HandwritingOCRModel
+            return HandwritingOCRModel.get_instance() is not None
+        except Exception:
+            return False
+
+    def extract(self, images: list["Image.Image"]) -> tuple[str, list[dict], list[dict], bool]:
+        if not images or not self.is_available():
+            return "", [], [], False
+
+        try:
+            from .handwriting_model import HandwritingOCRModel
+            hw_model = HandwritingOCRModel.get_instance()
+            if hw_model is None:
+                return "", [], [], False
+
+            # If isolated word image (e.g. RxHand dataset crops <= 400x400)
+            if len(images) == 1 and max(images[0].width, images[0].height) <= 450:
+                pred_word, conf = hw_model.predict_word(images[0])
+                if pred_word:
+                    tok = {
+                        "text": pred_word,
+                        "bbox": [0.0, 0.0, 1.0, 1.0],
+                        "confidence": conf,
+                        "line_no": 1,
+                        "page": 1,
+                    }
+                    line = {
+                        "text": pred_word,
+                        "bbox": [0.0, 0.0, 1.0, 1.0],
+                        "confidence": conf,
+                        "page": 1,
+                    }
+                    return pred_word, [tok], [line], True
+
+            # If full document page, docTR handles layout detection first, with CRNN refinement
+            return "", [], [], False
+        except Exception as e:
+            logger.warning("RxHandCRNNProvider failed: %s", e)
+            return "", [], [], False
+
+
 # Default registry initialized with standard priority chain
 OCR_REGISTRY = OCRProviderRegistry()
+# Specialized RxHand CRNN provider for isolated handwriting words
+OCR_REGISTRY.register(RxHandCRNNProvider(), priority=2)
 # docTR is our primary state-of-the-art deep learning OCR engine
 OCR_REGISTRY.register(DocTROCRProvider(), priority=5)
 if _TESSERACT_OK:

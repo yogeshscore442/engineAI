@@ -1,0 +1,46 @@
+{
+  "total_discovered_files": 6585,
+  "supported_image_files": 6378,
+  "supported_pdf_files": 1,
+  "annotation_and_metadata_files": 205,
+  "archive_files": 1,
+  "files_successfully_decoded": 6585,
+  "unreadable_or_corrupted_files": 0,
+  "duplicate_files_count": 0,
+  "eligible_for_training": 5578,
+  "by_subfolder": {
+    "Dataset": {
+      "total_files": 402,
+      "image_files": 200,
+      "pdf_files": 0,
+      "annotation_and_metadata_files": 202,
+      "archive_files": 0,
+      "decoded_ok": 402,
+      "corrupted": 0,
+      "duplicates": 0,
+      "ground_truth_samples": 0
+    },
+    "Prescription_Dataset(600)-t4I2Mj": {
+      "total_files": 603,
+      "image_files": 600,
+      "pdf_files": 1,
+      "annotation_and_metadata_files": 1,
+      "archive_files": 1,
+      "decoded_ok": 603,
+      "corrupted": 0,
+      "duplicates": 0,
+      "ground_truth_samples": 1
+    },
+    "RxHand Original": {
+      "total_files": 5580,
+      "image_files": 5578,
+      "pdf_files": 0,
+      "annotation_and_metadata_files": 2,
+      "archive_files": 0,
+      "decoded_ok": 5580,
+      "corrupted": 0,
+      "duplicates": 0,
+      "ground_truth_samples": 2
+    }
+  }
+}
