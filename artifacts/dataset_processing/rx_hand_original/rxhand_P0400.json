@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0400",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0400.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Tantn",
+  "normalized_ocr_text": "Tantn",
+  "ground_truth_text": "Tojenta",
+  "extracted_fields": {
+    "word": "Tantn",
+    "confidence": 0.415
+  },
+  "field_level_confidence": {
+    "word": 0.415
+  },
+  "review_required_fields": [
+    "word_crop: Tantn"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0482,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

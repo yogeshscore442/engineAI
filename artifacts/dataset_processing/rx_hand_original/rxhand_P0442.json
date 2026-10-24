@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0442",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0442.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "tttn",
+  "normalized_ocr_text": "Tttn",
+  "ground_truth_text": "Bilau",
+  "extracted_fields": {
+    "word": "tttn",
+    "confidence": 0.431
+  },
+  "field_level_confidence": {
+    "word": 0.431
+  },
+  "review_required_fields": [
+    "word_crop: tttn"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0482,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

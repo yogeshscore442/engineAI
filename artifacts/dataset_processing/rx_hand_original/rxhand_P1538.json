@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1538",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1538.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Net0",
+  "normalized_ocr_text": "Net0",
+  "ground_truth_text": "Dexter 60",
+  "extracted_fields": {
+    "word": "Net0",
+    "confidence": 0.366
+  },
+  "field_level_confidence": {
+    "word": 0.366
+  },
+  "review_required_fields": [
+    "word_crop: Net0"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0778,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

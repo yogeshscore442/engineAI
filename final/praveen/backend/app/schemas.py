@@ -221,9 +221,40 @@ class AskSource(BaseModel):
     doc_date: Optional[str] = None
 
 
+class MedicalReference(BaseModel):
+    title: str
+    source: str                          # e.g., "MedlinePlus / NIH", "CDSCO", "WHO", "AIIMS"
+    url: str                             # Authoritative HTTPS medical URL
+    description: Optional[str] = None
+    reference_type: str = "official_monograph"  # official_monograph | clinical_guideline | health_authority
+
+
+class ProductCard(BaseModel):
+    product_id: str
+    product_name: str
+    category: str                        # medical_device | healthcare_equipment | otc_product
+    price_inr: Optional[float] = None
+    price_display: Optional[str] = None
+    retailer: str                        # e.g., "Apollo Pharmacy", "Tata 1mg", "Omron Official", "Accu-Chek"
+    purchase_url: Optional[str] = None
+    image_url: Optional[str] = None
+    is_prescription_only: bool = False
+    specifications: Optional[dict[str, Any]] = None
+    comparison_notes: Optional[str] = None
+    availability_status: str = "VERIFIED_AVAILABLE"  # VERIFIED_AVAILABLE | CHECK_RETAILER | OUT_OF_STOCK
+    rating: Optional[float] = None
+
+
 class AskResponse(BaseModel):
     answer: str
-    sources: list[AskSource] = []
+    intent_category: str = "MEDICAL_INFORMATION"  # MEDICAL_INFORMATION | MEDICINE_QUERY | PRODUCT_SHOPPING | PRODUCT_ALTERNATIVES | MEDICINE_SUBSTITUTION_REQUEST | GENERAL_CONVERSATIONAL
+    medical_explanation: Optional[str] = None
+    medical_references: list[MedicalReference] = Field(default_factory=list)
+    product_recommendations: list[ProductCard] = Field(default_factory=list)
+    product_alternatives: list[ProductCard] = Field(default_factory=list)
+    safety_notes: list[str] = Field(default_factory=list)
+    needs_clinician_review: bool = False
+    sources: list[AskSource] = Field(default_factory=list)
     disclaimer: str = "Informational only, not medical advice. Consult your doctor."
     lang: str = "en"
 

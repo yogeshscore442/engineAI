@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0645",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0645.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Det",
+  "normalized_ocr_text": "Det",
+  "ground_truth_text": "Xinc",
+  "extracted_fields": {
+    "word": "Det",
+    "confidence": 0.262
+  },
+  "field_level_confidence": {
+    "word": 0.262
+  },
+  "review_required_fields": [
+    "word_crop: Det"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0589,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2624",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2624.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Fe",
+  "normalized_ocr_text": "Fe",
+  "ground_truth_text": "Frulac",
+  "extracted_fields": {
+    "word": "Fe",
+    "confidence": 0.136
+  },
+  "field_level_confidence": {
+    "word": 0.136
+  },
+  "review_required_fields": [
+    "word_crop: Fe"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0976,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

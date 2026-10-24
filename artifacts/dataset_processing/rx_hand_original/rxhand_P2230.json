@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2230",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2230.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "AttB",
+  "normalized_ocr_text": "Attb",
+  "ground_truth_text": "Aristovil-B",
+  "extracted_fields": {
+    "word": "AttB",
+    "confidence": 0.374
+  },
+  "field_level_confidence": {
+    "word": 0.374
+  },
+  "review_required_fields": [
+    "word_crop: AttB"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.1129,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

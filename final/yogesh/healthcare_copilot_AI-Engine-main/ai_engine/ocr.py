@@ -23,15 +23,11 @@ import base64
 import io
 import logging
 import math
+import os
+import time
 from pathlib import Path
 from typing import Optional
 from abc import ABC, abstractmethod
-
-# Pre-import torch safely on Windows to avoid DLL collision when PaddleOCR / ModelScope is loaded
-try:
-    import torch
-except Exception:
-    pass
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +56,7 @@ except ImportError:
 
 # ── docTR (deep learning OCR engine) ─────────────────────────────────────────
 _DOCTR_INSTANCE = None
-_DOCTR_OK = True
+_DOCTR_OK = False if (os.name == "nt" or os.getenv("DISABLE_DOCTR", "").lower() in ("1", "true", "yes")) else True
 
 def _get_doctr():
     """Lazy-load docTR predictor singleton using local cached weights (fast_base + crnn_vgg16_bn)."""
@@ -133,10 +129,8 @@ try:
     try:
         pytesseract.get_tesseract_version()
         _TESSERACT_OK = True
-        _TESSERACT_LANG = "eng+tam" if _os.path.isfile(
-            r"C:\Program Files\Tesseract-OCR\tessdata\tam.traineddata"
-        ) else "eng"
-        logger.info("Tesseract OCR ready (lang=%s) — secondary OCR engine active.", _TESSERACT_LANG)
+        _TESSERACT_LANG = "eng"
+        logger.info("Tesseract OCR ready (lang=%s) — primary fast OCR engine active.", _TESSERACT_LANG)
     except Exception:
         _TESSERACT_OK = False
         _TESSERACT_LANG = "eng"
@@ -235,29 +229,22 @@ def load_document(file_path: str, mime: str) -> dict:
             result["pages"] = images
             result["page_count"] = len(images)
         elif images:
-            # Evaluate raw images first (deep learning OCR models like docTR are trained on natural scene images and excel on raw)
+            # Evaluate raw images first with fast OCR pipeline
+            t_ocr_start = time.time()
             ocr_text_raw, engine_raw, tokens_raw, lines_raw, is_hw_raw = _run_ocr_pipeline(raw_images)
 
             best_text, best_engine, best_tokens, best_lines, best_hw, chosen_pages = (
                 ocr_text_raw, engine_raw, tokens_raw, lines_raw, is_hw_raw, raw_images
             )
 
-            # If raw yielded fewer than 35 tokens or < 120 chars, compare with gentle or adaptive variants
-            if len(tokens_raw) < 35 or len(ocr_text_raw.strip()) < 120:
+            # If completely empty and within fast budget (< 1.5s), try one gentle preprocessed pass
+            if (len(tokens_raw) == 0 or len(ocr_text_raw.strip()) < 8) and (time.time() - t_ocr_start < 1.5):
                 images_var_b = [_preprocess_gentle(img.copy()) for img in images]
                 ocr_text_b, engine_b, tokens_b, lines_b, is_hw_b = _run_ocr_pipeline(images_var_b)
-                if len(tokens_b) > len(best_tokens) or (len(ocr_text_b.strip()) > len(best_text.strip()) + 20):
+                if len(tokens_b) > len(best_tokens) or len(ocr_text_b.strip()) > len(best_text.strip()):
                     best_text, best_engine, best_tokens, best_lines, best_hw, chosen_pages = (
                         ocr_text_b, engine_b, tokens_b, lines_b, is_hw_b, images_var_b
                     )
-
-                if len(best_tokens) < 25:
-                    images_var_a = [_preprocess(img.copy()) for img in images]
-                    ocr_text_a, engine_a, tokens_a, lines_a, is_hw_a = _run_ocr_pipeline(images_var_a)
-                    if len(tokens_a) > len(best_tokens):
-                        best_text, best_engine, best_tokens, best_lines, best_hw, chosen_pages = (
-                            ocr_text_a, engine_a, tokens_a, lines_a, is_hw_a, images_var_a
-                        )
 
             result["pages"] = chosen_pages
             result["page_count"] = len(chosen_pages)
@@ -423,66 +410,33 @@ class TesseractOCRProvider(BaseOCRProvider):
                         })
                         all_text_lines.append(line_txt)
 
-                    # Sparse text recovery & orientation probe for photographed or handwritten notes
-                    if len(all_tokens) < 8:
-                        # 1. Orientation recovery probe: try 180, 90, and 270 degrees if text is very sparse
-                        for test_angle in [180, 90, 270]:
-                            try:
-                                rot_test = img.rotate(test_angle, expand=True)
-                                rot_data = tess.image_to_data(rot_test, lang=_TESSERACT_LANG, output_type=tess.Output.DICT, timeout=15)
-                                rot_cnt = sum(1 for tok in rot_data.get("text", []) if str(tok).strip())
-                                if rot_cnt > len(all_tokens) + 4:
-                                    logger.info("Orientation recovery: rotating %d° yielded %d tokens", test_angle, rot_cnt)
-                                    img = rot_test
-                                    w, h = img.size
-                                    data = rot_data
-                                    all_tokens.clear()
-                                    all_text_lines.clear()
-                                    all_lines.clear()
-                                    conf_scores.clear()
-                                    n_boxes = len(data.get("text", []))
-                                    for i in range(n_boxes):
-                                        raw_tok = str(data["text"][i]).strip()
-                                        conf = float(data["conf"][i]) if "conf" in data and data["conf"][i] != -1 else 75.0
-                                        if raw_tok and conf > 10.0:
-                                            tok_entry = {
-                                                "text": raw_tok,
-                                                "bbox": [round(float(data["left"][i]) / w, 4), round(float(data["top"][i]) / h, 4), round(float(data["width"][i]) / w, 4), round(float(data["height"][i]) / h, 4)],
-                                                "confidence": round(min(1.0, conf / 100.0), 3),
-                                                "line_no": int(data.get("line_num", [0])[i]),
-                                                "page": page_idx + 1,
-                                            }
-                                            all_tokens.append(tok_entry)
-                                            conf_scores.append(conf)
-                                            all_text_lines.append(raw_tok)
-                                    break
-                            except Exception:
-                                pass
-
-                        # 2. Sparse text PSM 11 mode: finds fragmented/handwritten text scattered on form
-                        if len(all_tokens) < 10:
-                            try:
-                                sparse_data = tess.image_to_data(img, lang=_TESSERACT_LANG, config="--psm 11", output_type=tess.Output.DICT, timeout=15)
-                                n_sp = len(sparse_data.get("text", []))
-                                sp_tokens = []
-                                for i in range(n_sp):
-                                    raw_sp = str(sparse_data["text"][i]).strip()
-                                    conf_sp = float(sparse_data["conf"][i]) if "conf" in sparse_data and sparse_data["conf"][i] != -1 else 60.0
-                                    if raw_sp and conf_sp > 15.0:
-                                        sp_tokens.append({
-                                            "text": raw_sp,
-                                            "bbox": [round(float(sparse_data["left"][i]) / w, 4), round(float(sparse_data["top"][i]) / h, 4), round(float(sparse_data["width"][i]) / w, 4), round(float(sparse_data["height"][i]) / h, 4)],
-                                            "confidence": round(min(1.0, conf_sp / 100.0), 3),
-                                            "line_no": int(sparse_data.get("line_num", [0])[i]),
+                    # Only if completely 0 tokens were found, try a single fast inverted probe (180 deg)
+                    if len(all_tokens) == 0:
+                        try:
+                            rot_test = img.rotate(180, expand=True)
+                            rot_data = tess.image_to_data(rot_test, lang="eng", output_type=tess.Output.DICT, timeout=3)
+                            rot_cnt = sum(1 for tok in rot_data.get("text", []) if str(tok).strip())
+                            if rot_cnt > 2:
+                                img = rot_test
+                                w, h = img.size
+                                data = rot_data
+                                n_boxes = len(data.get("text", []))
+                                for i in range(n_boxes):
+                                    raw_tok = str(data["text"][i]).strip()
+                                    conf = float(data["conf"][i]) if "conf" in data and data["conf"][i] != -1 else 75.0
+                                    if raw_tok and conf > 10.0:
+                                        tok_entry = {
+                                            "text": raw_tok,
+                                            "bbox": [round(float(data["left"][i]) / w, 4), round(float(data["top"][i]) / h, 4), round(float(data["width"][i]) / w, 4), round(float(data["height"][i]) / h, 4)],
+                                            "confidence": round(min(1.0, conf / 100.0), 3),
+                                            "line_no": int(data.get("line_num", [0])[i]),
                                             "page": page_idx + 1,
-                                        })
-                                if len(sp_tokens) > len(all_tokens):
-                                    logger.info("Tesseract PSM 11 sparse text mode recovered %d tokens", len(sp_tokens))
-                                    all_tokens = sp_tokens
-                                    all_text_lines = [t["text"] for t in sp_tokens]
-                                    conf_scores = [t["confidence"] * 100.0 for t in sp_tokens]
-                            except Exception as e:
-                                logger.debug("PSM 11 sparse probe skipped: %s", e)
+                                        }
+                                        all_tokens.append(tok_entry)
+                                        conf_scores.append(conf)
+                                        all_text_lines.append(raw_tok)
+                        except Exception:
+                            pass
 
                 except Exception as e:
                     logger.warning("Tesseract page processing warning: %s", e)
@@ -928,12 +882,24 @@ class RxHandCRNNProvider(BaseOCRProvider):
     def is_available(self) -> bool:
         try:
             from .handwriting_model import HandwritingOCRModel
-            return HandwritingOCRModel.get_instance() is not None
+            if HandwritingOCRModel._instance is not None:
+                return True
+            cur_dir = Path(__file__).resolve().parent
+            candidates = [
+                cur_dir.parents[2] / "models" / "prescription_ocr" / "crnn_handwriting.pth",
+                cur_dir.parent / "models" / "prescription_ocr" / "crnn_handwriting.pth",
+                Path(r"c:\Users\YOGESH\Downloads\ai-health-copilot-main\ai-health-copilot-main\final\models\prescription_ocr\crnn_handwriting.pth"),
+            ]
+            return any(c.exists() for c in candidates)
         except Exception:
             return False
 
     def extract(self, images: list["Image.Image"]) -> tuple[str, list[dict], list[dict], bool]:
-        if not images or not self.is_available():
+        if not images:
+            return "", [], [], False
+
+        # Only run isolated word inference on word-sized images (<= 450px)
+        if len(images) != 1 or max(images[0].width, images[0].height) > 450:
             return "", [], [], False
 
         try:
@@ -941,27 +907,22 @@ class RxHandCRNNProvider(BaseOCRProvider):
             hw_model = HandwritingOCRModel.get_instance()
             if hw_model is None:
                 return "", [], [], False
-
-            # If isolated word image (e.g. RxHand dataset crops <= 400x400)
-            if len(images) == 1 and max(images[0].width, images[0].height) <= 450:
-                pred_word, conf = hw_model.predict_word(images[0])
-                if pred_word:
-                    tok = {
-                        "text": pred_word,
-                        "bbox": [0.0, 0.0, 1.0, 1.0],
-                        "confidence": conf,
-                        "line_no": 1,
-                        "page": 1,
-                    }
-                    line = {
-                        "text": pred_word,
-                        "bbox": [0.0, 0.0, 1.0, 1.0],
-                        "confidence": conf,
-                        "page": 1,
-                    }
-                    return pred_word, [tok], [line], True
-
-            # If full document page, docTR handles layout detection first, with CRNN refinement
+            pred_word, conf = hw_model.predict_word(images[0])
+            if pred_word:
+                tok = {
+                    "text": pred_word,
+                    "bbox": [0.0, 0.0, 1.0, 1.0],
+                    "confidence": conf,
+                    "line_no": 1,
+                    "page": 1,
+                }
+                line = {
+                    "text": pred_word,
+                    "bbox": [0.0, 0.0, 1.0, 1.0],
+                    "confidence": conf,
+                    "page": 1,
+                }
+                return pred_word, [tok], [line], True
             return "", [], [], False
         except Exception as e:
             logger.warning("RxHandCRNNProvider failed: %s", e)
@@ -972,14 +933,14 @@ class RxHandCRNNProvider(BaseOCRProvider):
 OCR_REGISTRY = OCRProviderRegistry()
 # Specialized RxHand CRNN provider for isolated handwriting words
 OCR_REGISTRY.register(RxHandCRNNProvider(), priority=2)
-# docTR is our primary state-of-the-art deep learning OCR engine
-OCR_REGISTRY.register(DocTROCRProvider(), priority=5)
+# Fast local Tesseract OCR (0.67s response time)
 if _TESSERACT_OK:
-    OCR_REGISTRY.register(TesseractOCRProvider(), priority=15)
+    OCR_REGISTRY.register(TesseractOCRProvider(), priority=5)
+# docTR deep learning provider (only used if explicitly enabled or Tesseract not present)
+if _DOCTR_OK and os.getenv("DISABLE_DOCTR", "").lower() not in ("1", "true", "yes"):
+    OCR_REGISTRY.register(DocTROCRProvider(), priority=15)
+if not _TESSERACT_OK:
     OCR_REGISTRY.register(PaddleOCRProvider(), priority=25)
-else:
-    OCR_REGISTRY.register(PaddleOCRProvider(), priority=25)
-    OCR_REGISTRY.register(TesseractOCRProvider(), priority=35)
 OCR_REGISTRY.register(PyMuPDFTextProvider(), priority=40)
 
 

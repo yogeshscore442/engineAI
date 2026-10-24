@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2752",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2752.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Fx",
+  "normalized_ocr_text": "Fx",
+  "ground_truth_text": "Flexibac",
+  "extracted_fields": {
+    "word": "Fx",
+    "confidence": 0.169
+  },
+  "field_level_confidence": {
+    "word": 0.169
+  },
+  "review_required_fields": [
+    "word_crop: Fx"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0956,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

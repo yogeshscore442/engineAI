@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0212",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0212.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Tn",
+  "normalized_ocr_text": "Tn",
+  "ground_truth_text": "Zolfin",
+  "extracted_fields": {
+    "word": "Tn",
+    "confidence": 0.344
+  },
+  "field_level_confidence": {
+    "word": 0.344
+  },
+  "review_required_fields": [
+    "word_crop: Tn"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0609,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

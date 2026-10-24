@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1376",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1376.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Fnn",
+  "normalized_ocr_text": "Fnn",
+  "ground_truth_text": "Emlidus",
+  "extracted_fields": {
+    "word": "Fnn",
+    "confidence": 0.173
+  },
+  "field_level_confidence": {
+    "word": 0.173
+  },
+  "review_required_fields": [
+    "word_crop: Fnn"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0538,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

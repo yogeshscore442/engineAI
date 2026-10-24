@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1275",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1275.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "DB",
+  "normalized_ocr_text": "Db",
+  "ground_truth_text": "Eslilex 5",
+  "extracted_fields": {
+    "word": "DB",
+    "confidence": 0.137
+  },
+  "field_level_confidence": {
+    "word": 0.137
+  },
+  "review_required_fields": [
+    "word_crop: DB"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0569,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

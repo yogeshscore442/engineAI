@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2033",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2033.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Dee",
+  "normalized_ocr_text": "Dee",
+  "ground_truth_text": "Delfmz ",
+  "extracted_fields": {
+    "word": "Dee",
+    "confidence": 0.289
+  },
+  "field_level_confidence": {
+    "word": 0.289
+  },
+  "review_required_fields": [
+    "word_crop: Dee"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0918,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

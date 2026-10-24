@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0202",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0202.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "N0",
+  "normalized_ocr_text": "N0",
+  "ground_truth_text": "Brezofil 200",
+  "extracted_fields": {
+    "word": "N0",
+    "confidence": 0.138
+  },
+  "field_level_confidence": {
+    "word": 0.138
+  },
+  "review_required_fields": [
+    "word_crop: N0"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0609,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

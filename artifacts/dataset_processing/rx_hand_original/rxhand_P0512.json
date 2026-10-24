@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0512",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0512.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "x",
+  "normalized_ocr_text": "X",
+  "ground_truth_text": "Avloclav",
+  "extracted_fields": {
+    "word": "x",
+    "confidence": 0.475
+  },
+  "field_level_confidence": {
+    "word": 0.475
+  },
+  "review_required_fields": [
+    "word_crop: x"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0586,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

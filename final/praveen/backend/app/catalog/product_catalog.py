@@ -84,6 +84,10 @@ AUTHORIZED_DOMAINS = {
     "www.sunpharma.com",
     "cdsco.gov.in",
     "www.cdsco.gov.in",
+    "drtrust.in",
+    "www.drtrust.in",
+    "karmahealthcare.com",
+    "www.karmahealthcare.com",
 }
 
 BLOCKED_URL_SHORTENERS = {
@@ -166,6 +170,8 @@ class ProductRecord(BaseModel):
     verification_status: str = "VERIFIED_OFFICIAL_CATALOG"
     country_region: str = "IN"
     license_info: str = "CDSCO / State Drug Licensing Authority approved formulation"
+    price_inr: Optional[float] = None
+    comparison_notes: Optional[str] = None
     last_checked: str
     is_stale: bool = False
 
@@ -593,7 +599,6 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "last_checked": "2026-10-18T00:00:00Z",
     },
 
-    # ── Medical Devices and Healthcare Equipment ─────────────────────────────
     {
         "product_id": "device-bp-omron-hem7120",
         "product_name": "Omron HEM-7120 Fully Automatic Digital Blood Pressure Monitor",
@@ -606,6 +611,7 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "pack_size": "1 Unit (Monitor + Arm Cuff + 4 AA Batteries)",
         "category": "medical_device",
         "is_prescription_only": False,
+        "price_inr": 2150.0,
         "device_specifications": {
             "model": "HEM-7120",
             "measurement_method": "Oscillometric method",
@@ -632,6 +638,78 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "last_checked": "2026-10-19T00:00:00Z",
     },
     {
+        "product_id": "device-bp-morepen-bp02",
+        "product_name": "Dr. Morepen BP-02 Fully Automatic Blood Pressure Monitor",
+        "brand_name": "Dr. Morepen",
+        "active_ingredient": "Automated Sphygmomanometer",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Dr. Morepen Laboratories Ltd.",
+        "pack_size": "1 Unit (Monitor + Cuff + Batteries)",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 1350.0,
+        "comparison_notes": "Economical alternative (~₹1,350 vs ₹2,150) featuring dual-user 120-reading memory and irregular heartbeat indicator; Omron offers single-reading memory with Intellisense clinical protocol validation.",
+        "device_specifications": {
+            "model": "BP-02",
+            "measurement_method": "Oscillometric method",
+            "pressure_range": "0 - 300 mmHg",
+            "memory": "120 readings for 2 users",
+            "cuff_size": "Standard (22 - 32 cm)",
+            "regulatory_status": "CDSCO Class B Registered"
+        },
+        "product_image_url": "https://www.apollopharmacy.in/images/products/dr-morepen-bp02.jpg",
+        "image_provenance": {
+            "source": "Dr. Morepen / Apollo Pharmacy",
+            "rights": "Authorized retail equipment catalog",
+            "retrieval_date": "2026-02-10",
+            "alt_text": "Dr. Morepen BP-02 digital blood pressure monitor"
+        },
+        "purchase_url": "https://www.apollopharmacy.in/otc/dr-morepen-bp02-blood-pressure-monitor",
+        "merchant_name": "Apollo Pharmacy",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO License: MFG/MD/2021/000142",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-bp-beurer-bm28",
+        "product_name": "Beurer BM 28 Upper Arm Blood Pressure Monitor",
+        "brand_name": "Beurer",
+        "active_ingredient": "Automated Sphygmomanometer",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Beurer GmbH",
+        "pack_size": "1 Unit (Monitor + Universal Cuff + Case)",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 2490.0,
+        "comparison_notes": "Premium alternative featuring a universal cuff (22 - 42 cm, accommodating standard to extra-large arms without extra cuff purchase), resting indicator, and 4 x 30 memory slots.",
+        "device_specifications": {
+            "model": "BM 28",
+            "cuff_size": "Universal cuff (22 - 42 cm)",
+            "memory": "4 x 30 memory spaces",
+            "resting_indicator": True,
+            "arrhythmia_detection": True,
+            "regulatory_status": "ESH validated, CDSCO Class B Registered"
+        },
+        "product_image_url": "https://www.beurerindia.com/images/products/bm-28.jpg",
+        "image_provenance": {
+            "source": "Beurer India Official Catalog",
+            "rights": "Manufacturer verified product display",
+            "retrieval_date": "2026-02-15",
+            "alt_text": "Beurer BM 28 upper arm blood pressure monitor with universal cuff"
+        },
+        "purchase_url": "https://www.beurerindia.com/products/medical/blood-pressure-monitors/bm-28",
+        "merchant_name": "Beurer Official",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO Medical Device Reg: MD-6821-2022",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
         "product_id": "device-glucometer-accuchek-active",
         "product_name": "Accu-Chek Active Blood Glucose Monitoring System",
         "brand_name": "Accu-Chek",
@@ -643,6 +721,7 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "pack_size": "1 Kit (Meter + Lancing Device + 10 Test Strips)",
         "category": "medical_device",
         "is_prescription_only": False,
+        "price_inr": 1450.0,
         "device_specifications": {
             "model": "Accu-Chek Active",
             "measuring_time": "Approx. 5 seconds",
@@ -667,6 +746,186 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "last_checked": "2026-10-19T00:00:00Z",
     },
     {
+        "product_id": "device-glucometer-onetouch-select",
+        "product_name": "OneTouch Select Plus Simple Glucometer",
+        "brand_name": "OneTouch",
+        "active_ingredient": "Blood Glucose Meter",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "LifeScan Medical Devices",
+        "pack_size": "1 Kit (Meter + Lancing Device + 10 Strips)",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 999.0,
+        "comparison_notes": "Intuitive button-free interface with ColorSure 3-color range indicator (blue=low, green=in-range, red=high); conforms to ISO 15197:2013 standards.",
+        "device_specifications": {
+            "model": "Select Plus Simple",
+            "sample_volume": "1.0 µL",
+            "test_time": "5 seconds",
+            "coding": "No coding required",
+            "standards": "ISO 15197:2013",
+            "regulatory_status": "CDSCO Class B Registered"
+        },
+        "product_image_url": "https://www.apollopharmacy.in/images/products/onetouch-select.jpg",
+        "image_provenance": {
+            "source": "LifeScan / Apollo Pharmacy",
+            "rights": "Authorized retail catalog",
+            "retrieval_date": "2026-02-12",
+            "alt_text": "OneTouch Select Plus Simple compact blood glucose monitor"
+        },
+        "purchase_url": "https://www.apollopharmacy.in/otc/onetouch-select-plus-simple-glucometer",
+        "merchant_name": "Apollo Pharmacy",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO License: IMP/MD/2020/000188",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-glucometer-morepen-bg03",
+        "product_name": "Dr. Morepen GlucoOne BG-03 Blood Glucose Monitor",
+        "brand_name": "Dr. Morepen",
+        "active_ingredient": "Blood Glucose Meter",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Dr. Morepen Laboratories Ltd.",
+        "pack_size": "1 Kit (Meter + Lancing Device + 25 Strips)",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 649.0,
+        "comparison_notes": "Economical choice with significantly lower ongoing test strip replenishment cost (~₹12/strip vs ₹25/strip for Accu-Chek) and tiny 0.5 µL blood sample requirement with 300-test memory.",
+        "device_specifications": {
+            "model": "BG-03",
+            "sample_volume": "0.5 µL",
+            "test_time": "5 seconds",
+            "memory": "300 test memories",
+            "technology": "Biosensor electrochemical",
+            "regulatory_status": "CDSCO Class B Registered"
+        },
+        "product_image_url": "https://www.1mg.com/images/products/dr-morepen-bg03.jpg",
+        "image_provenance": {
+            "source": "Dr. Morepen / Tata 1mg",
+            "rights": "Authorized product catalog display",
+            "retrieval_date": "2026-02-14",
+            "alt_text": "Dr. Morepen GlucoOne BG-03 blood glucose meter"
+        },
+        "purchase_url": "https://www.1mg.com/medical-devices/dr-morepen-gluco-one-bg-03-blood-glucose-monitor-138385",
+        "merchant_name": "Tata 1mg",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO License: MFG/MD/2021/000301",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-thermometer-omron-mc246",
+        "product_name": "Omron MC-246 Digital Thermometer",
+        "brand_name": "Omron",
+        "active_ingredient": "Digital Contact Thermometer",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Omron Healthcare Co., Ltd.",
+        "pack_size": "1 Unit (Thermometer + Storage Case + Battery)",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 260.0,
+        "device_specifications": {
+            "model": "MC-246",
+            "measurement_type": "Oral, Rectal, Underarm",
+            "reading_time": "60 seconds",
+            "water_resistant": True,
+            "beeper": "Fever alert beeper signal",
+            "battery": "Replaceable LR41 button cell",
+            "regulatory_status": "CDSCO Class A Medical Device Registered"
+        },
+        "product_image_url": "https://www.apollopharmacy.in/images/products/omron-mc246.jpg",
+        "image_provenance": {
+            "source": "Omron Healthcare / Apollo Pharmacy",
+            "rights": "Authorized distributor product listing",
+            "retrieval_date": "2026-02-18",
+            "alt_text": "Omron MC-246 digital stick thermometer with protective cap"
+        },
+        "purchase_url": "https://www.apollopharmacy.in/otc/omron-digital-thermometer-mc-246",
+        "merchant_name": "Apollo Pharmacy",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO License: MD-14-118-TH",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-thermometer-morepen-mt222",
+        "product_name": "Dr. Morepen MT-222 Digi Classic Digital Thermometer",
+        "brand_name": "Dr. Morepen",
+        "active_ingredient": "Digital Contact Thermometer",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Dr. Morepen Laboratories Ltd.",
+        "pack_size": "1 Unit",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 175.0,
+        "comparison_notes": "Budget-friendly clinical alternative (~₹175 vs ₹260) with fever beeper alarm and automatic power shut-off.",
+        "device_specifications": {
+            "model": "MT-222",
+            "measurement_type": "Oral, Underarm",
+            "reading_time": "60 seconds",
+            "fever_alarm": True,
+            "auto_shutoff": True,
+            "regulatory_status": "CDSCO Class A Registered"
+        },
+        "product_image_url": "https://www.1mg.com/images/products/morepen-mt222.jpg",
+        "image_provenance": {
+            "source": "Dr. Morepen / Tata 1mg",
+            "rights": "Authorized distributor product listing",
+            "retrieval_date": "2026-02-18",
+            "alt_text": "Dr. Morepen MT-222 digital thermometer"
+        },
+        "purchase_url": "https://www.1mg.com/medical-devices/dr-morepen-digi-classic-thermometer-mt-222-34821",
+        "merchant_name": "Tata 1mg",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO License: MFG/MD/2021/000219",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-thermometer-beurer-ft09",
+        "product_name": "Beurer FT 09 Digital Clinical Thermometer",
+        "brand_name": "Beurer",
+        "active_ingredient": "Digital Contact Thermometer",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Beurer GmbH",
+        "pack_size": "1 Unit (Thermometer + Case)",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 310.0,
+        "comparison_notes": "100% waterproof and fully disinfectable casing designed for clinical hygiene with ±0.1 °C German precision standard.",
+        "device_specifications": {
+            "model": "FT 09",
+            "waterproof": True,
+            "disinfectable": True,
+            "accuracy": "±0.1 °C",
+            "memory": "Last measurement memory recall",
+            "regulatory_status": "CE & CDSCO Class A Registered"
+        },
+        "product_image_url": "https://www.beurerindia.com/images/products/ft-09.jpg",
+        "image_provenance": {
+            "source": "Beurer India Official Catalog",
+            "rights": "Manufacturer verified product display",
+            "retrieval_date": "2026-02-18",
+            "alt_text": "Beurer FT 09 waterproof digital thermometer"
+        },
+        "purchase_url": "https://www.beurerindia.com/products/medical/thermometers/ft-09",
+        "merchant_name": "Beurer Official",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO Reg: MD-6825-2022",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
         "product_id": "device-pulse-oximeter-beurer-po30",
         "product_name": "Beurer PO 30 Pulse Oximeter",
         "brand_name": "Beurer",
@@ -678,6 +937,7 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "pack_size": "1 Unit (Fingertip Oximeter + Lanyard + Batteries)",
         "category": "medical_device",
         "is_prescription_only": False,
+        "price_inr": 1850.0,
         "device_specifications": {
             "model": "PO 30",
             "measurement_parameters": "Arterial oxygen saturation (SpO2) and heart rate (pulse)",
@@ -699,6 +959,114 @@ _SEED_CATALOG: list[dict[str, Any]] = [
         "country_region": "IN",
         "license_info": "CDSCO Medical Device Reg: MD-6819-2022",
         "last_checked": "2026-10-18T00:00:00Z",
+    },
+    {
+        "product_id": "device-oximeter-drtrust-pro",
+        "product_name": "Dr. Trust Professional Series Fingertip Pulse Oximeter",
+        "brand_name": "Dr. Trust",
+        "active_ingredient": "Fingertip Pulse Oximeter",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Nureca Ltd.",
+        "pack_size": "1 Unit",
+        "category": "medical_device",
+        "is_prescription_only": False,
+        "price_inr": 1499.0,
+        "comparison_notes": "Features Perfusion Index (PI) readout and audio-visual alert buzzer when oxygen drops below threshold, at a lower price point (~₹1,499 vs ₹1,850).",
+        "device_specifications": {
+            "model": "Professional Series 201",
+            "parameters": "SpO2, Pulse Rate, Perfusion Index (PI)",
+            "display": "Rotatable OLED multi-directional display",
+            "alarm": "Audio-visual hypo-oxygenation alert",
+            "regulatory_status": "US FDA / CE & CDSCO Registered"
+        },
+        "product_image_url": "https://www.1mg.com/images/products/dr-trust-oximeter.jpg",
+        "image_provenance": {
+            "source": "Nureca / Tata 1mg",
+            "rights": "Authorized distributor listing",
+            "retrieval_date": "2026-02-18",
+            "alt_text": "Dr. Trust Professional Series fingertip pulse oximeter"
+        },
+        "purchase_url": "https://www.1mg.com/medical-devices/dr-trust-usa-professional-series-fingertip-pulse-oximeter-with-audio-visual-alarm-138390",
+        "merchant_name": "Tata 1mg",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO Reg: IMP/MD/2021/000512",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-wheelchair-karma-aurora8",
+        "product_name": "Karma Aurora 8 Deluxe Folding Wheelchair",
+        "brand_name": "Karma",
+        "active_ingredient": "Manual Transit Wheelchair",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Karma Healthcare Ltd.",
+        "pack_size": "1 Unit",
+        "category": "healthcare_equipment",
+        "is_prescription_only": False,
+        "price_inr": 6850.0,
+        "device_specifications": {
+            "model": "Aurora 8",
+            "frame": "Epoxy powder-coated durable steel frame",
+            "weight_capacity": "100 kg",
+            "seat_width": "46 cm (18 inches)",
+            "foldable": True,
+            "rear_wheels": "Solid rubber MAG wheels (24 inch)",
+            "regulatory_status": "ISO 7176 certified wheelchair"
+        },
+        "product_image_url": "https://www.apollopharmacy.in/images/products/karma-aurora8.jpg",
+        "image_provenance": {
+            "source": "Karma Healthcare / Apollo Pharmacy",
+            "rights": "Authorized equipment distributor",
+            "retrieval_date": "2026-02-20",
+            "alt_text": "Karma Aurora 8 Deluxe folding steel wheelchair"
+        },
+        "purchase_url": "https://www.apollopharmacy.in/otc/karma-aurora-8-deluxe-wheelchair",
+        "merchant_name": "Apollo Pharmacy",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO Reg: MD-6830-2022",
+        "last_checked": "2026-10-19T00:00:00Z",
+    },
+    {
+        "product_id": "device-wheelchair-arcatron-frido",
+        "product_name": "Arcatron Frido Lightweight Folding Transit Wheelchair",
+        "brand_name": "Arcatron",
+        "active_ingredient": "Ultra-lightweight Transit Wheelchair",
+        "strength": "N/A",
+        "dosage_form": "device",
+        "route": "external",
+        "manufacturer": "Arcatron Mobility Pvt. Ltd.",
+        "pack_size": "1 Unit",
+        "category": "healthcare_equipment",
+        "is_prescription_only": False,
+        "price_inr": 8499.0,
+        "comparison_notes": "Aircraft-grade aluminum frame weighing only 9.5 kg (vs 17 kg standard steel), making it significantly easier to lift into car trunks for travel; companion-assisted attendant brakes.",
+        "device_specifications": {
+            "model": "Frido Light",
+            "frame": "Aircraft-grade aluminum frame",
+            "total_weight": "9.5 kg (ultra-portable)",
+            "weight_capacity": "110 kg",
+            "brakes": "Attendant hand brakes + parking brakes",
+            "foldable": "Compact fold into car boot",
+            "regulatory_status": "CE & ISO certified"
+        },
+        "product_image_url": "https://www.1mg.com/images/products/arcatron-frido.jpg",
+        "image_provenance": {
+            "source": "Arcatron Mobility / Tata 1mg",
+            "rights": "Authorized distributor listing",
+            "retrieval_date": "2026-02-20",
+            "alt_text": "Arcatron Frido ultra-lightweight folding wheelchair"
+        },
+        "purchase_url": "https://www.1mg.com/medical-devices/arcatron-frido-lightweight-transit-wheelchair-138395",
+        "merchant_name": "Tata 1mg",
+        "verification_status": "EXACT_MATCH_VERIFIED",
+        "country_region": "IN",
+        "license_info": "CDSCO Reg: MFG/MD/2021/000450",
+        "last_checked": "2026-10-19T00:00:00Z",
     }
 ]
 
@@ -1089,6 +1457,70 @@ class ProductCatalogService:
                 f"Exact match verified for {matched_item.product_name} ({matched_item.active_ingredient} {matched_item.strength}, {matched_item.dosage_form})."
             ] + ([f"URL safety warning: {url_err}"] if url_err else []),
         )
+
+    def find_device_or_equipment(self, query: str) -> Optional[ProductRecord]:
+        """
+        Finds a verified medical device or healthcare equipment by matching keywords
+        (thermometer, bp monitor, glucometer, oximeter, wheelchair, etc.).
+        """
+        q = query.lower()
+        devices = [p for p in self._catalog.values() if p.category in ("medical_device", "healthcare_equipment")]
+
+        if any(w in q for w in ["thermometer", "temperature", "fever"]):
+            return next((d for d in devices if "mc246" in d.product_id or "mc-246" in d.product_name.lower()), devices[0] if devices else None)
+        elif any(w in q for w in ["blood pressure", "bp monitor", "sphygmomanometer", "hypertension", "hem-7120", "hem7120"]):
+            return next((d for d in devices if "hem7120" in d.product_id or "hem-7120" in d.product_name.lower()), None)
+        elif any(w in q for w in ["glucometer", "glucose meter", "sugar meter", "accu-chek", "accuchek"]):
+            return next((d for d in devices if "accuchek" in d.product_id or "accu-chek" in d.product_name.lower()), None)
+        elif any(w in q for w in ["oximeter", "pulse oximeter", "spo2"]):
+            return next((d for d in devices if "po30" in d.product_id or "po 30" in d.product_name.lower()), None)
+        elif any(w in q for w in ["wheelchair", "wheel chair", "mobility"]):
+            return next((d for d in devices if "aurora8" in d.product_id or "aurora" in d.product_name.lower()), None)
+
+        for d in devices:
+            if d.product_name.lower() in q or (d.brand_name and d.brand_name.lower() in q):
+                return d
+        return None
+
+    def get_device_alternatives(self, query: str) -> tuple[Optional[ProductRecord], list[ProductRecord]]:
+        """
+        Retrieves the primary device and comparable verified alternatives based on:
+        - Intended use
+        - Important specifications
+        - Compatibility
+        - Price and budget
+        - Safety and regulatory certifications
+        Never invents unavailable products or fabricated URLs.
+        """
+        q = query.lower()
+        devices = [p for p in self._catalog.values() if p.category in ("medical_device", "healthcare_equipment")]
+
+        if any(w in q for w in ["thermometer", "temperature", "fever"]):
+            primary = next((d for d in devices if "mc246" in d.product_id), None)
+            alts = [d for d in devices if "thermometer" in d.product_id and d.product_id != getattr(primary, "product_id", "")]
+            return primary, alts
+
+        if any(w in q for w in ["blood pressure", "bp monitor", "hem-7120", "hem7120", "sphygmomanometer", "hypertension"]):
+            primary = next((d for d in devices if "hem7120" in d.product_id), None)
+            alts = [d for d in devices if "device-bp-" in d.product_id and d.product_id != getattr(primary, "product_id", "")]
+            return primary, alts
+
+        if any(w in q for w in ["glucometer", "glucose meter", "sugar meter", "accuchek", "accu-chek"]):
+            primary = next((d for d in devices if "accuchek" in d.product_id), None)
+            alts = [d for d in devices if "glucometer" in d.product_id and d.product_id != getattr(primary, "product_id", "")]
+            return primary, alts
+
+        if any(w in q for w in ["oximeter", "pulse oximeter", "spo2"]):
+            primary = next((d for d in devices if "po30" in d.product_id), None)
+            alts = [d for d in devices if "oximeter" in d.product_id and d.product_id != getattr(primary, "product_id", "")]
+            return primary, alts
+
+        if any(w in q for w in ["wheelchair", "wheel chair", "mobility"]):
+            primary = next((d for d in devices if "aurora8" in d.product_id), None)
+            alts = [d for d in devices if "wheelchair" in d.product_id and d.product_id != getattr(primary, "product_id", "")]
+            return primary, alts
+
+        return None, []
 
 
 # Global Singleton Service

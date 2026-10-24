@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1487",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1487.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Ftx",
+  "normalized_ocr_text": "Ftx",
+  "ground_truth_text": "Lubilex",
+  "extracted_fields": {
+    "word": "Ftx",
+    "confidence": 0.332
+  },
+  "field_level_confidence": {
+    "word": 0.332
+  },
+  "review_required_fields": [
+    "word_crop: Ftx"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0883,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

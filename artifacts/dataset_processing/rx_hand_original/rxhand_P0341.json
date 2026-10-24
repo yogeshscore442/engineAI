@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0341",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0341.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "At",
+  "normalized_ocr_text": "At",
+  "ground_truth_text": "Azibact",
+  "extracted_fields": {
+    "word": "At",
+    "confidence": 0.29
+  },
+  "field_level_confidence": {
+    "word": 0.29
+  },
+  "review_required_fields": [
+    "word_crop: At"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.1466,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

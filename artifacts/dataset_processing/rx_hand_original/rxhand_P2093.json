@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2093",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2093.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Al",
+  "normalized_ocr_text": "Al",
+  "ground_truth_text": "Fasid Plus",
+  "extracted_fields": {
+    "word": "Al",
+    "confidence": 0.117
+  },
+  "field_level_confidence": {
+    "word": 0.117
+  },
+  "review_required_fields": [
+    "word_crop: Al"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0998,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

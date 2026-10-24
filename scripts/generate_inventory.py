@@ -188,8 +188,44 @@ def run_inventory():
     with open(inv_json, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
     print(f"Wrote inventory summary JSON to: {inv_json}")
+
+    # Build dataset_issues.csv
+    issues = []
+    for r in records:
+        issue_type = None
+        issue_desc = None
+        if not r["can_decode"]:
+            issue_type = "CORRUPT_OR_UNREADABLE"
+            issue_desc = r["corruption_error"]
+        elif r["duplicate_status"] != "unique":
+            issue_type = "DUPLICATE_FILE"
+            issue_desc = r["duplicate_status"]
+        elif r["content_role"] == "archive":
+            issue_type = "ARCHIVE_FILE"
+            issue_desc = "Zip archive present alongside uncompressed images"
+        elif r["content_role"] == "image" and r["intended_use"] != "training_and_evaluation" and r["dataset_subfolder"] == "Dataset":
+            issue_type = "NO_FULL_TEXT_GROUND_TRUTH"
+            issue_desc = "Image has box-level coordinates but lacks word/transcription text labels"
+
+        if issue_type:
+            issues.append({
+                "relative_file_path": r["relative_file_path"],
+                "dataset_subfolder": r["dataset_subfolder"],
+                "file_name": r["file_name"],
+                "issue_type": issue_type,
+                "issue_description": issue_desc,
+                "can_decode": r["can_decode"],
+                "remedy_or_action": "Use for bounding box count evaluation only" if issue_type == "NO_FULL_TEXT_GROUND_TRUTH" else ("Decompressed source exists" if issue_type == "ARCHIVE_FILE" else "Exclude from training")
+            })
+
+    issues_df = pd.DataFrame(issues)
+    issues_csv = reports_dir / "dataset_issues.csv"
+    issues_df.to_csv(issues_csv, index=False, encoding="utf-8")
+    print(f"Wrote dataset issues CSV to: {issues_csv} ({len(issues)} issues logged)")
+
     print("\nSummary Summary:")
     print(json.dumps(summary, indent=2))
 
 if __name__ == "__main__":
     run_inventory()
+

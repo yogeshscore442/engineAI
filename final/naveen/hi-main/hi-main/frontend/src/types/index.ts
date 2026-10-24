@@ -213,3 +213,47 @@ export interface ProductMatchResult {
   prescription_warning?: string | null;
   reasons: string[];
 }
+
+export interface MedicalReference {
+  title: string;
+  source: string;
+  url: string;
+  description?: string | null;
+  reference_type: string;
+}
+
+export interface ProductCard {
+  product_id: string;
+  product_name: string;
+  category: string;
+  price_inr?: number | null;
+  price_display?: string | null;
+  retailer: string;
+  purchase_url?: string | null;
+  image_url?: string | null;
+  is_prescription_only: boolean;
+  specifications?: { [key: string]: any } | null;
+  comparison_notes?: string | null;
+  availability_status: string;
+  rating?: number | null;
+}
+
+export interface AskResponse {
+  answer: string;
+  intent_category:
+    | 'MEDICAL_INFORMATION'
+    | 'MEDICINE_QUERY'
+    | 'PRODUCT_SHOPPING'
+    | 'PRODUCT_ALTERNATIVES'
+    | 'MEDICINE_SUBSTITUTION_REQUEST'
+    | 'GENERAL_CONVERSATIONAL';
+  medical_explanation?: string | null;
+  medical_references: MedicalReference[];
+  product_recommendations: ProductCard[];
+  product_alternatives: ProductCard[];
+  safety_notes: string[];
+  needs_clinician_review: boolean;
+  sources: Array<{ record_id: string; doc_type?: string; doc_date?: string | null; field?: string }>;
+  disclaimer: string;
+  lang: string;
+}

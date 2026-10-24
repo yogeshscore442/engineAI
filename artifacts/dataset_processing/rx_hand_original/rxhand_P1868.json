@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1868",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1868.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Nte",
+  "normalized_ocr_text": "Nte",
+  "ground_truth_text": "montene",
+  "extracted_fields": {
+    "word": "Nte",
+    "confidence": 0.342
+  },
+  "field_level_confidence": {
+    "word": 0.342
+  },
+  "review_required_fields": [
+    "word_crop: Nte"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.1034,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

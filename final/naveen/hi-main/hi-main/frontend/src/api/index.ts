@@ -1,6 +1,6 @@
-import type { DocType, TimelineResponse, TrendsResponse, AlertsResponse, UploadResponse, ApiError, Record as RecordType, UploadProgress, ProductRecord, ProductMatchResult } from '../types';
+import type { DocType, TimelineResponse, TrendsResponse, AlertsResponse, UploadResponse, ApiError, Record as RecordType, UploadProgress, ProductRecord, ProductMatchResult, AskResponse } from '../types';
 
-export type { UploadProgress, ProductRecord, ProductMatchResult };
+export type { UploadProgress, ProductRecord, ProductMatchResult, AskResponse };
 
 const MOCK_CONTRACT_BASE = '/contract';
 
@@ -381,16 +381,34 @@ export const api = {
     return request(`/profiles/${profileId}`, { method: 'DELETE' });
   },
 
-  async askRecords(profileId: string = 'default', question: string): Promise<{ answer: string; sources: Array<{ record_id: string; field: string }>; grounded: boolean }> {
+  async askRecords(profileId: string = 'default', question: string): Promise<AskResponse> {
     if (useMock) {
       await delay(800);
       return {
         answer: `Based on your verified medical records, your latest HbA1c is 6.8% (down from 9.2%), showing good glycemic control. You are currently prescribed Metformin 500mg (1-0-1 after food). Always verify specific medication changes with your physician.`,
+        intent_category: 'MEDICAL_INFORMATION',
+        medical_explanation: 'HbA1c reflects average blood sugar levels over the past 2-3 months. 6.8% indicates well-controlled diabetes management.',
+        medical_references: [
+          {
+            title: 'American Diabetes Association: Standards of Care (Glycemic Targets)',
+            source: 'American Diabetes Association (ADA)',
+            url: 'https://diabetes.org',
+            reference_type: 'CLINICAL_GUIDELINE',
+            description: 'Standard clinical thresholds for HbA1c targets in adults with type 2 diabetes.'
+          }
+        ],
+        product_recommendations: [],
+        product_alternatives: [],
+        safety_notes: [
+          'Do not adjust medication dosage without consulting your prescribing physician or certified endocrinologist.'
+        ],
+        needs_clinician_review: false,
         sources: [
           { record_id: 'demo-patient-001', field: 'tests[HbA1c]' },
           { record_id: 'demo-patient-001', field: 'medicines[Metformin]' }
         ],
-        grounded: true,
+        disclaimer: 'This information is for clinical and educational reference only and should not replace professional medical advice.',
+        lang: 'en'
       };
     }
     return request(`/profiles/${profileId}/ask`, { method: 'POST', body: JSON.stringify({ question }) });

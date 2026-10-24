@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1539",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1539.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "FB",
+  "normalized_ocr_text": "Fb",
+  "ground_truth_text": "Pli 50",
+  "extracted_fields": {
+    "word": "FB",
+    "confidence": 0.103
+  },
+  "field_level_confidence": {
+    "word": 0.103
+  },
+  "review_required_fields": [
+    "word_crop: FB"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0778,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

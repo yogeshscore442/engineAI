@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2630",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2630.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Fn",
+  "normalized_ocr_text": "Fn",
+  "ground_truth_text": "Plagrin",
+  "extracted_fields": {
+    "word": "Fn",
+    "confidence": 0.329
+  },
+  "field_level_confidence": {
+    "word": 0.329
+  },
+  "review_required_fields": [
+    "word_crop: Fn"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.099,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

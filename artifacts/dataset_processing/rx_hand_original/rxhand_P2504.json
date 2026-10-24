@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2504",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2504.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "AD",
+  "normalized_ocr_text": "Ad",
+  "ground_truth_text": "Conit-XR",
+  "extracted_fields": {
+    "word": "AD",
+    "confidence": 0.119
+  },
+  "field_level_confidence": {
+    "word": 0.119
+  },
+  "review_required_fields": [
+    "word_crop: AD"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0793,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

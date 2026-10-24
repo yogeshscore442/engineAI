@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0219",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0219.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "CtB",
+  "normalized_ocr_text": "Ctb",
+  "ground_truth_text": "Cor algen-D",
+  "extracted_fields": {
+    "word": "CtB",
+    "confidence": 0.174
+  },
+  "field_level_confidence": {
+    "word": 0.174
+  },
+  "review_required_fields": [
+    "word_crop: CtB"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0609,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

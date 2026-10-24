@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0196",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0196.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Tm0",
+  "normalized_ocr_text": "Tm0",
+  "ground_truth_text": "Zo.mups 20",
+  "extracted_fields": {
+    "word": "Tm0",
+    "confidence": 0.209
+  },
+  "field_level_confidence": {
+    "word": 0.209
+  },
+  "review_required_fields": [
+    "word_crop: Tm0"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0609,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

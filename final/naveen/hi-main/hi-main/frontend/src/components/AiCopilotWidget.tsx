@@ -9,7 +9,13 @@ type ChatMessage = {
   text: string;
   imageUrl?: string;
   timestamp: string;
-  sources?: Array<{ record_id: string; field: string }>;
+  sources?: Array<{ record_id: string; field?: string; doc_type?: string; doc_date?: string | null }>;
+  intent_category?: string;
+  medical_references?: any[];
+  product_recommendations?: any[];
+  product_alternatives?: any[];
+  safety_notes?: string[];
+  needs_clinician_review?: boolean;
 };
 
 const AI_FEATURES = [
@@ -160,7 +166,13 @@ export default function AiCopilotWidget() {
 
     try {
       let aiResponseText = '';
-      let sources: Array<{ record_id: string; field: string }> = [];
+      let sources: Array<{ record_id: string; field?: string; doc_type?: string; doc_date?: string | null }> = [];
+      let intentCategory: string | undefined = undefined;
+      let medicalReferences: any[] = [];
+      let productRecommendations: any[] = [];
+      let productAlternatives: any[] = [];
+      let safetyNotes: string[] = [];
+      let needsClinicianReview = false;
 
       if (attachedImage) {
         aiResponseText = 'This chat does not extract attached images. Open Upload, submit the document, and review the extracted fields there.';
@@ -168,6 +180,12 @@ export default function AiCopilotWidget() {
         const res = await api.askRecords(profileId, q);
         aiResponseText = res.answer;
         sources = res.sources || [];
+        intentCategory = res.intent_category;
+        medicalReferences = res.medical_references || [];
+        productRecommendations = res.product_recommendations || [];
+        productAlternatives = res.product_alternatives || [];
+        safetyNotes = res.safety_notes || [];
+        needsClinicianReview = res.needs_clinician_review || false;
       }
 
       const aiMsgId = `ai-${messageId()}`;
@@ -179,6 +197,12 @@ export default function AiCopilotWidget() {
           sender: 'ai',
           text: aiResponseText,
           sources,
+          intent_category: intentCategory,
+          medical_references: medicalReferences,
+          product_recommendations: productRecommendations,
+          product_alternatives: productAlternatives,
+          safety_notes: safetyNotes,
+          needs_clinician_review: needsClinicianReview,
           timestamp,
         },
       ]);
@@ -433,7 +457,129 @@ export default function AiCopilotWidget() {
                                 <img src={msg.imageUrl} alt="Attached Record" className="w-full h-auto object-cover" />
                               </div>
                             )}
+
+                            {/* Intent Category Badge */}
+                            {msg.intent_category && isAi && (
+                              <div className="mb-1.5 flex items-center gap-1.5">
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                                  {msg.intent_category === 'MEDICAL_INFORMATION'
+                                    ? '🩺 Medical Information'
+                                    : msg.intent_category === 'MEDICINE_QUERY'
+                                    ? '💊 Medication Guidance'
+                                    : msg.intent_category === 'PRODUCT_SHOPPING'
+                                    ? '🛒 Equipment Shopping'
+                                    : msg.intent_category === 'PRODUCT_ALTERNATIVES'
+                                    ? '⚖️ Equipment Alternatives'
+                                    : msg.intent_category === 'MEDICINE_SUBSTITUTION_REQUEST'
+                                    ? '⚠️ Prescription Safeguard'
+                                    : '🤖 Clinical AI'}
+                                </span>
+                              </div>
+                            )}
+
+                            {/* Clinician Review Required Warning */}
+                            {msg.needs_clinician_review && isAi && (
+                              <div className="mb-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-[10px] text-amber-900 leading-tight">
+                                <strong>⚠️ Requires Clinician / Pharmacist Verification:</strong> Prescription changes or dosage queries cannot be verified automatically.
+                              </div>
+                            )}
+
+                            {/* Safety Notes */}
+                            {msg.safety_notes && msg.safety_notes.length > 0 && isAi && (
+                              <div className="mb-2 p-2 bg-rose-50 border border-rose-200 rounded-lg text-[10px] text-rose-900 space-y-1">
+                                <div className="font-bold uppercase tracking-wider text-[9px] text-rose-950">🛡️ Safety Notes:</div>
+                                <ul className="list-disc pl-4 space-y-0.5">
+                                  {msg.safety_notes.map((sn, sIdx) => (
+                                    <li key={sIdx}>{sn}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
                             <div className="whitespace-pre-wrap font-medium">{msg.text}</div>
+
+                            {/* Verified Medical References */}
+                            {msg.medical_references && msg.medical_references.length > 0 && isAi && (
+                              <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-1.5">
+                                <div className="text-[10px] font-bold text-sky-900 flex items-center gap-1">
+                                  <span>📚</span>
+                                  <span>Official Medical References:</span>
+                                </div>
+                                <div className="space-y-1">
+                                  {msg.medical_references.map((mr, mIdx) => (
+                                    <div key={mIdx} className="p-1.5 bg-sky-50/70 rounded border border-sky-100 text-[10px]">
+                                      <div className="font-semibold text-sky-950">{mr.title}</div>
+                                      <div className="text-slate-500 text-[9px]">{mr.source}</div>
+                                      {mr.url && (
+                                        <a href={mr.url} target="_blank" rel="noopener noreferrer" className="text-sky-700 underline font-bold text-[9px] inline-flex items-center gap-0.5">
+                                          <span>View Reference</span> <span>↗</span>
+                                        </a>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Verified Product Recommendations (Only for shopping queries) */}
+                            {msg.product_recommendations && msg.product_recommendations.length > 0 && isAi && (
+                              <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-1.5">
+                                <div className="text-[10px] font-bold text-emerald-900 flex items-center gap-1">
+                                  <span>🛒</span>
+                                  <span>Verified Equipment Options:</span>
+                                </div>
+                                <div className="space-y-1.5">
+                                  {msg.product_recommendations.map((pr, pIdx) => (
+                                    <div key={pIdx} className="p-2 bg-emerald-50/60 rounded-lg border border-emerald-200 text-[10px] space-y-1">
+                                      <div className="flex items-center justify-between">
+                                        <span className="font-bold text-slate-900">{pr.product_name}</span>
+                                        {pr.price_display && (
+                                          <span className="font-extrabold text-emerald-700 text-xs">{pr.price_display}</span>
+                                        )}
+                                      </div>
+                                      <div className="text-[9px] text-slate-600">Retailer: {pr.retailer}</div>
+                                      {pr.purchase_url && (
+                                        <a href={pr.purchase_url} target="_blank" rel="noopener noreferrer" className="inline-block text-[9px] font-bold text-emerald-800 bg-white px-2 py-0.5 rounded border border-emerald-300 hover:bg-emerald-100">
+                                          View on {pr.retailer} ↗
+                                        </a>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Product Alternatives */}
+                            {msg.product_alternatives && msg.product_alternatives.length > 0 && isAi && (
+                              <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-1.5">
+                                <div className="text-[10px] font-bold text-purple-900 flex items-center gap-1">
+                                  <span>⚖️</span>
+                                  <span>Comparable Alternatives:</span>
+                                </div>
+                                <div className="space-y-1.5">
+                                  {msg.product_alternatives.map((pa, aIdx) => (
+                                    <div key={aIdx} className="p-2 bg-purple-50/60 rounded-lg border border-purple-200 text-[10px] space-y-1">
+                                      <div className="flex items-center justify-between">
+                                        <span className="font-bold text-slate-900">{pa.product_name}</span>
+                                        {pa.price_display && (
+                                          <span className="font-extrabold text-purple-700 text-xs">{pa.price_display}</span>
+                                        )}
+                                      </div>
+                                      {pa.comparison_notes && (
+                                        <div className="text-[9px] text-purple-900 bg-white/80 p-1 rounded border border-purple-100">
+                                          {pa.comparison_notes}
+                                        </div>
+                                      )}
+                                      {pa.purchase_url && (
+                                        <a href={pa.purchase_url} target="_blank" rel="noopener noreferrer" className="inline-block text-[9px] font-bold text-purple-800 bg-white px-2 py-0.5 rounded border border-purple-300 hover:bg-purple-100">
+                                          View Alternative ↗
+                                        </a>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
 
                             {msg.sources && msg.sources.length > 0 && (
                               <div className="mt-2 pt-2 border-t border-slate-100 flex flex-wrap gap-1">

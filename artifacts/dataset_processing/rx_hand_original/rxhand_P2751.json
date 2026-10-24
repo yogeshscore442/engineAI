@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P2751",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P2751.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Dem0",
+  "normalized_ocr_text": "Dem0",
+  "ground_truth_text": "Flenex Dew",
+  "extracted_fields": {
+    "word": "Dem0",
+    "confidence": 0.187
+  },
+  "field_level_confidence": {
+    "word": 0.187
+  },
+  "review_required_fields": [
+    "word_crop: Dem0"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0956,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

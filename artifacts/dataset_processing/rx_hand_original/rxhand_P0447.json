@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0447",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0447.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Netnn",
+  "normalized_ocr_text": "Netnn",
+  "ground_truth_text": "pantonix",
+  "extracted_fields": {
+    "word": "Netnn",
+    "confidence": 0.397
+  },
+  "field_level_confidence": {
+    "word": 0.397
+  },
+  "review_required_fields": [
+    "word_crop: Netnn"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0482,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

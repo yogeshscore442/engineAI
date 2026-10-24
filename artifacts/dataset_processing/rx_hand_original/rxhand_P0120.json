@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P0120",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P0120.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Dante",
+  "normalized_ocr_text": "Dante",
+  "ground_truth_text": "Kinate",
+  "extracted_fields": {
+    "word": "Dante",
+    "confidence": 0.374
+  },
+  "field_level_confidence": {
+    "word": 0.374
+  },
+  "review_required_fields": [
+    "word_crop: Dante"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0721,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}

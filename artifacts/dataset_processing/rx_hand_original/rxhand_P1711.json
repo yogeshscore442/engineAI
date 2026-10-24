@@ -1,0 +1,32 @@
+{
+  "document_id": "rxhand_P1711",
+  "original_relative_file_path": "dataset/RxHand Original/RxHand-Handwritten Prescription Word Image Dataset/P1711.jpg",
+  "dataset_source": "RxHand Original",
+  "page_number": 1,
+  "detected_document_category": "handwritten_prescription_word",
+  "raw_ocr_text": "Cl",
+  "normalized_ocr_text": "Cl",
+  "ground_truth_text": "Clacef",
+  "extracted_fields": {
+    "word": "Cl",
+    "confidence": 0.18
+  },
+  "field_level_confidence": {
+    "word": 0.18
+  },
+  "review_required_fields": [
+    "word_crop: Cl"
+  ],
+  "ocr_model_and_version": "CRNN_RxHand_v1.0",
+  "preprocessing_config": {
+    "resize": [
+      32,
+      128
+    ],
+    "color": "grayscale",
+    "normalization": "[-1, 1]"
+  },
+  "processing_duration_sec": 0.0643,
+  "processing_status": "SUCCESS",
+  "error_details": null
+}
